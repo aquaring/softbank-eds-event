@@ -62,3 +62,12 @@
     src: url('../fonts/NotoSansJP-Bold.woff') format('woff'),
         url('../fonts/NotoSansJP-Bold.ttf') format('truetype');
 }
+
+@font-face {
+    font-family: "Aboreto";
+    font-style: normal;
+    font-weight: 400;
+    font-display: swap;
+    src: url('../fonts/Aboreto-Regular.woff') format('woff'),
+        url('../fonts/Aboreto-Regular.ttf') format('truetype');
+}

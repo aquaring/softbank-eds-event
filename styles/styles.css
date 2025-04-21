@@ -26,6 +26,7 @@
   /* fonts */
   --body-font-family: "Noto Sans JP", "Hiragino Kaku Gothic ProN", "Hiragino Sans", system-ui, sans-serif;
   --heading-font-family: "Noto Sans JP", "Hiragino Kaku Gothic ProN", "Hiragino Sans", system-ui, sans-serif;
+  --heading-font-family-en: "Aboreto", "Hiragino Kaku Gothic ProN", "Hiragino Sans", system-ui, sans-serif;
 
   /* body sizes */
   --body-font-size-default: 16px;

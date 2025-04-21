@@ -1,0 +1,144 @@
+.section.sbw-section-bg-img-container {
+  position: relative;
+  padding: 120px 0;
+  max-width: 100%;
+}
+
+.sbw-section-bg-img-container-inner {
+  max-width: 1200px;
+  margin: 0 auto;
+  width: 100%;
+  box-sizing: border-box;
+  overflow-wrap: break-word;
+  word-wrap: break-word;
+}
+
+.sbw-section-bg-img {
+  margin: 0 calc(50% - 50vw) 64px;
+  padding-inline: calc(50vw - 50%);
+  text-align: center;
+}
+
+.sbw-section-bg-img .bg-img picture {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: -1;
+}
+
+.sbw-section-bg-img .bg-img picture img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.sbw-section-bg-img-content-title h1,
+.sbw-section-bg-img-content-text p {
+  overflow-wrap: break-word;
+  word-wrap: break-word;
+  word-break: break-word;
+  hyphens: auto;
+}
+
+.sbw-section-bg-img-content-text {
+  width: 100%;
+  max-width: 100%;
+}
+
+.sbw-section-bg-img-content-text p {
+  width: fit-content;
+  max-width: 100%;
+}
+
+.sbw-section-bg-img-content-title h1 {
+  font-family: var(--heading-font-family-en);
+  font-size: 80px;
+  font-weight: 400;
+  line-height: 1;
+  color: var(--text-black);
+  margin-block: 0;
+  max-width: 100%;
+}
+
+.sbw-section-bg-img-content-text p {
+  display: inline-block;
+  font-size: 16px;
+  font-weight: 500;
+  line-height: 1.5;
+  letter-spacing: 0.06em;
+  margin-block: 8px 0;
+  background: linear-gradient(90deg, #A3B8FF 0%, #CD98FF 80%, #FF72FF 100%);
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: transparent;
+}
+
+@media (width <= 768px) {
+  .sbw-section-bg-img {
+    padding: 80px calc(50vw - 50%);
+  }
+
+  .sbw-section-bg-img-content-title h1 {
+    font-size: 56px;
+  }
+}
+
+/* heading-left */
+.sbw-section-bg-img.heading-left {
+  text-align: left;
+}
+
+.sbw-section-bg-img.heading-left .sbw-section-bg-img-content-title h1 {
+  font-size: 56px;
+}
+
+/* heading-left のpadding設定を親コンテナに移動 */
+.section.sbw-section-bg-img-container:has(.sbw-section-bg-img.heading-left) {
+  padding-block: 100px;
+}
+
+@media (width <= 768px) {
+  .section.sbw-section-bg-img-container:has(.sbw-section-bg-img.heading-left) {
+    padding-block: 64px;
+  }
+
+  .sbw-section-bg-img.heading-left .sbw-section-bg-img-content-title h1 {
+    font-size: 40px;
+  }
+}
+
+/* inner-s */
+.sbw-section-bg-img-container-inner.inner-s .inner-s-wrapper {
+  max-width: 800px;
+  width: 100%;
+  margin-inline: auto;
+}
+
+/* 画像がないときの背景色：白 */
+.section.sbw-section-bg-img-container:has(.sbw-section-bg-img.no-bg-img) {
+  background-color: var(--background-color);
+}
+
+/* bg-black1 */
+.section.sbw-section-bg-img-container:has(.sbw-section-bg-img.bg-black1) {
+  background-color: var(--background-black-01);
+}
+
+/* bg-black2 */
+.section.sbw-section-bg-img-container:has(.sbw-section-bg-img.bg-black2) {
+  background-color: var(--background-black-02);
+}
+
+/* bg-gray */
+.section.sbw-section-bg-img-container:has(.sbw-section-bg-img.bg-gray) {
+  background-color: var(--background-gray-01);
+}
+
+/* bg-black1, bg-black2 */
+.section.sbw-section-bg-img-container:has(.sbw-section-bg-img.bg-black1) .sbw-section-bg-img-content-title h1,
+.section.sbw-section-bg-img-container:has(.sbw-section-bg-img.bg-black2) .sbw-section-bg-img-content-title h1 {
+  color: var(--text-white);
+}
