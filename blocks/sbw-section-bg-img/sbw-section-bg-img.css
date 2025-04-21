@@ -95,7 +95,6 @@
   font-size: 56px;
 }
 
-/* heading-left のpadding設定を親コンテナに移動 */
 .section.sbw-section-bg-img-container:has(.sbw-section-bg-img.heading-left) {
   padding-block: 100px;
 }
