@@ -11,6 +11,7 @@
   box-sizing: border-box;
   overflow-wrap: break-word;
   word-wrap: break-word;
+  padding-inline: 24px;
 }
 
 .sbw-section-bg-img {
@@ -82,9 +83,11 @@
   }
 
   .sbw-section-bg-img-container-inner {
-	margin-inline: 24px;
+    width: 100%;
     max-width: 100%;
-    width: auto;
+    padding-inline: 24px;
+    margin-inline: 0;
+    box-sizing: border-box;
   }
 
   .sbw-section-bg-img-content-title h1 {
