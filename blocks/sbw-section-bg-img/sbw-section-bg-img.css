@@ -77,12 +77,22 @@
 }
 
 @media (width <= 768px) {
-  .sbw-section-bg-img {
-    padding: 80px calc(50vw - 50%);
+  .section.sbw-section-bg-img-container {
+    padding: 80px 0;
+  }
+
+  .sbw-section-bg-img-container-inner {
+	margin-inline: 24px;
+    max-width: 100%;
+    width: auto;
   }
 
   .sbw-section-bg-img-content-title h1 {
     font-size: 56px;
+  }
+
+  .sbw-section-bg-img {
+    margin-bottom: 40px;
   }
 }
 
