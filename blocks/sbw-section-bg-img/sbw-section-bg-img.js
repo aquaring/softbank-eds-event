@@ -78,11 +78,11 @@ function setupBackgroundImage(block, contentContainer) {
  */
 function addClassesToContent(container) {
   // タイトル処理
-  const h1 = container.querySelector('h1');
-  if (h1) {
-    const h1Parent = h1.closest('div');
-    if (h1Parent && h1Parent !== container) {
-      h1Parent.classList.add('sbw-section-bg-img-content-title');
+  const h2 = container.querySelector('h2');
+  if (h2) {
+    const h2Parent = h2.closest('div');
+    if (h2Parent && h2Parent !== container) {
+      h2Parent.classList.add('sbw-section-bg-img-content-title');
     }
   }
   
