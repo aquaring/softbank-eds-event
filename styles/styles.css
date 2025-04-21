@@ -1,24 +1,21 @@
 :root {
   /* colors background */
   --background-color: #fff;
-  --background-blue-01: #F0F2F4;
-  --background-blue-02: #F4F8FA;
-  --background-blueblack:#001B38;
-  --background-black: #010E1C;
-  --background-gray-01: #ECECEC;
-  --background-gray-02: #D6D6D6;
-  --background-gray-03: #E1E1E6;
+  --background-black-01: #131414;
+  --background-black-02: #1A1A1A;
+  --background-gray-01: #F0F2F4;
+  --background-gray-02: #E1E1E6;
+  --background-gray-03: #F4F8FA;
   --background-blue-hover: #D7ECF7;
+  --background-purple-01: #B18AE6;
 
   /* colors text */
   --text-black: #323232;
-  --text-black-000: #000;
+  --text-blue: #007BFF;
   --text-white: #FFF;
 
   /* colors link */
   --link-blue: #007BFF;
-  --link-blue-02: #2979FF;
-  --link-orange: #FF751A;
 
   /* colors border */
   --border-gray: #C1C6CC;
@@ -128,7 +125,7 @@ h6 { font-size: var(--heading-font-size-xs); }
 pre {
   padding: 16px;
   border-radius: 8px;
-  background-color: var(--background-blue-01);
+  background-color: var(--background-gray-01);
   overflow-x: auto;
   white-space: pre;
 }
@@ -142,7 +139,7 @@ button {
 
 /* links */
 a:any-link {
-  color: var(--link-blue-02);
+  color: var(--link-blue);
   text-decoration: none;
   word-break: break-word;
 }
@@ -156,7 +153,7 @@ button {
   align-items: center;
   gap: 8px;
   border-radius: 4px;
-  background: var(--link-blue-02);
+  background: var(--link-blue);
   color: var(--background-color);
   text-align: center;
   font-family: var(--body-font-family);
@@ -204,7 +201,7 @@ button:focus {
 
 button:disabled,
 button:disabled:hover {
-  background-color: var(--background-blue-01);
+  background-color: var(--background-gray-01);
   cursor: unset;
 }
 
@@ -292,10 +289,10 @@ main > .section{
         max-width: 100%;
         padding: 0 0;
         &.bg-gray01{
-            background-color: var(--background-blue-01);
+            background-color: var(--background-gray-01);
         }
         &.bg-gray02{
-            background-color: var(--background-blue-02);
+            background-color: var(--background-gray-03);
         }
 
         .bg-section-wrapper{
@@ -308,7 +305,7 @@ main > .section{
 /* section metadata */
 main .section.light,
 main .section.highlight {
-  background-color: var(--background-blue-01);
+  background-color: var(--background-gray-01);
   margin: 0;
   padding: 40px 0;
 }
@@ -450,7 +447,7 @@ main .section.highlight {
 
 /* p-index-content */
 .p-index {
-    background-color: var(--background-blue-02);
+    background-color: var(--background-gray-03);
 }
 .p-index-content {
     .accordion-container {
@@ -534,7 +531,7 @@ main .section.highlight {
                         font-weight: 500;
                         line-height: 1.5;
                         border-radius: 4px;
-                        background-color: var(--background-blue-02);
+                        background-color: var(--background-gray-03);
                         transition: all .2s ease-out;
 
                         cursor: pointer;
@@ -744,7 +741,7 @@ main .section.highlight {
                 align-items: center;
                 gap: 8px;
                 border-radius: 4px;
-                background: var(--background-blue-02);
+                background: var(--background-gray-03);
                 color: var(--text-black);
                 font-size: 13px;
                 font-weight: 400;
