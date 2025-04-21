@@ -15,9 +15,9 @@
 }
 
 .sbw-section-bg-img {
-  margin: 0 calc(50% - 50vw) 64px;
-  padding-inline: calc(50vw - 50%);
+  margin: 0 0 64px;
   text-align: center;
+  width: 100%;
 }
 
 .sbw-section-bg-img .bg-img picture {
