@@ -54,6 +54,41 @@ function buildAutoBlocks(main) {
 }
 
 /**
+ * divタグをsectionタグに変換する
+ * セクションのロードが完了した後にだけ実行すること
+ * @param {Element} main メイン要素
+ */
+function replaceDivsWithSections(main) {
+  // セクションクラスを持つdivのみを検索
+  const sectionDivs = [...main.querySelectorAll('div.section')];
+  
+  sectionDivs.forEach((div) => {
+    try {
+      // status="loaded"のセクションのみ変換
+      if (div.dataset.sectionStatus === 'loaded') {
+        // 新しいsectionタグを作成
+        const section = document.createElement('section');
+        
+        // 属性をコピー
+        [...div.attributes].forEach((attr) => {
+          section.setAttribute(attr.name, attr.value);
+        });
+        
+        // 子要素を一つずつ移動（イベントリスナーを保持）
+        while (div.firstChild) {
+          section.appendChild(div.firstChild);
+        }
+        
+        // 元のdivを置き換え
+        div.parentNode.replaceChild(section, div);
+      }
+    } catch (e) {
+      console.error('Section conversion error:', e);
+    }
+  });
+}
+
+/**
  * Decorates the main element.
  * @param {Element} main The main element
  */
@@ -123,6 +158,13 @@ function loadDelayed() {
 async function loadPage() {
   await loadEager(document);
   await loadLazy(document);
+  
+  // すべてのコンテンツロード後にdivからsectionに変換
+  const main = document.querySelector('main');
+  if (main) {
+    replaceDivsWithSections(main);
+  }
+  
   loadDelayed();
 }
 
