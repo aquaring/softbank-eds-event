@@ -462,13 +462,7 @@ function decorateIcons(element, prefix = '') {
  * @param {Element} main The container element
  */
 function decorateSections(main) {
-  main.querySelectorAll(':scope > div').forEach((div) => {
-    const section = document.createElement('section');
-    [...div.attributes].forEach((attr) => {
-      section.setAttribute(attr.name, attr.value);
-    });
-    section.innerHTML = div.innerHTML;
-    
+  main.querySelectorAll(':scope > div').forEach((section) => {
     const wrappers = [];
     let defaultContent = false;
     [...section.children].forEach((e) => {
@@ -480,15 +474,8 @@ function decorateSections(main) {
       }
       wrappers[wrappers.length - 1].append(e);
     });
-    
-    // 一度すべての子要素を削除
-    while (section.firstChild) {
-      section.removeChild(section.firstChild);
-    }
-    
-    // ラッパーを追加
+
     wrappers.forEach((wrapper) => section.append(wrapper));
-    
     section.classList.add('section');
     section.dataset.sectionStatus = 'initialized';
     section.style.display = 'none';
@@ -510,9 +497,6 @@ function decorateSections(main) {
       });
       sectionMeta.parentNode.remove();
     }
-    
-    // 元のdivを置き換える
-    div.parentElement.replaceChild(section, div);
   });
 }
 
@@ -634,7 +618,7 @@ function decorateBlock(block) {
     wrapTextNodes(block);
     const blockWrapper = block.parentElement;
     blockWrapper.classList.add(`${shortBlockName}-wrapper`);
-    const section = block.closest('section.section');
+    const section = block.closest('.section');
     if (section) section.classList.add(`${shortBlockName}-container`);
   }
 }
@@ -644,7 +628,7 @@ function decorateBlock(block) {
  * @param {Element} main The container element
  */
 function decorateBlocks(main) {
-  main.querySelectorAll('section.section > div > div').forEach(decorateBlock);
+  main.querySelectorAll('div.section > div > div').forEach(decorateBlock);
 }
 
 /**
@@ -712,7 +696,7 @@ async function loadSection(section, loadCallback) {
  * @param {Element} element The parent element of sections to load
  */
 async function loadSections(element) {
-  const sections = [...element.querySelectorAll('section.section')];
+  const sections = [...element.querySelectorAll('div.section')];
   for (let i = 0; i < sections.length; i += 1) {
     // eslint-disable-next-line no-await-in-loop
     await loadSection(sections[i]);
