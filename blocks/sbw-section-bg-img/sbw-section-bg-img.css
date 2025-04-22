@@ -15,8 +15,6 @@
 }
 
 .sbw-section-bg-img {
-  margin: 0 0 64px;
-  text-align: center;
   width: 100%;
 }
 
@@ -33,6 +31,11 @@
   width: 100%;
   height: 100%;
   object-fit: cover;
+}
+
+.sbw-section-bg-img-content hgroup {
+  text-align: center;
+  margin-bottom: 64px;
 }
 
 .sbw-section-bg-img-content-title h2,
@@ -94,13 +97,13 @@
     font-size: 56px;
   }
 
-  .sbw-section-bg-img {
+  .sbw-section-bg-img-content hgroup {
     margin-bottom: 40px;
   }
 }
 
 /* heading-left */
-.sbw-section-bg-img.heading-left {
+.sbw-section-bg-img.heading-left .sbw-section-bg-img-content hgroup {
   text-align: left;
 }
 
