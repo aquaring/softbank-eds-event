@@ -20,6 +20,7 @@
 
   /* colors border */
   --border-gray: #C1C6CC;
+  --border-gray-dark: #828282;
   --border-black-01: #333;
   --border-black-02: #616161CC; /* #616161 · 80% */
   --border-black-03: #555;

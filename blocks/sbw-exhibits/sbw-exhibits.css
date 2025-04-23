@@ -1,0 +1,148 @@
+.sbw-exhibits-item {
+  width: 100%;
+  position: relative;
+  overflow: hidden;
+  border: 1px solid var(--border-gray-dark);
+  border-radius: 8px;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  border-bottom: 1px solid var(--border-gray-dark);
+}
+
+.sbw-exhibits-item-image {
+  width: 100%;
+  overflow: hidden;
+  picture {
+    width: 100%;
+    img {
+      width: 100%;
+      aspect-ratio: 16 / 9;
+      transition: 0.3s;
+      transform-origin: center center;
+    }
+  }
+}
+
+.sbw-exhibits > ul {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 40px;
+  padding-left: 0;
+  margin-block: 0;
+}
+
+.sbw-exhibits-listItem {
+  display: grid;
+  grid-template-rows: subgrid;
+  gap: 0;
+  border: none;
+  margin: 0;
+  padding: 0;
+}
+
+/* リンク付きのスタイル */
+.sbw-exhibits-item.-link {
+  text-decoration: none;
+  cursor: pointer;
+  &:hover {
+    .sbw-exhibits-item-image img {
+      transform: scale(1.02);
+    }
+  }
+}
+
+/* Read moreボタンのスタイル */
+.sbw-exhibits-item-readmore {
+  position: relative;
+  background-color: var(--text-black-dark);
+  color: var(--background-color);
+  padding: 13px 40px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 16px;
+  font-weight: 700;
+  line-height: 1.4;
+  margin-top: auto;
+  border-radius: 0 0 8px 8px;
+}
+
+.sbw-exhibits-item-readmore-arrow {
+  &::after {
+    content: '';
+    display: block;
+    width: 1em;
+    height: 1em;
+    background: url("../../icons/arrow-white.svg") no-repeat center / contain !important;
+    margin: 0 !important;
+    position: absolute;
+    top: 50%;
+    right: 39px;
+    transform: translate(0, -50%);
+  }
+}
+
+.sbw-exhibits-item-inner {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  border: none;
+}
+
+.sbw-exhibits {
+  .sbw-exhibits-item-body1 {
+    padding: 24px 24px 0;
+  }
+  
+  .sbw-exhibits-item-body1 h3 {
+    font-size: 24px;
+    font-weight: 700;
+    line-height: 1.25;
+	color: var(--text-black);
+    margin-block: 0;
+  }
+  
+  .sbw-exhibits-item-body2 {
+    padding: 0 24px 24px;
+    margin-bottom: 0;
+  }
+  
+  /* font系の設定 */
+  p, li {
+    color: var(--text-black);
+    font-size: 16px;
+    font-weight: 400;
+    line-height: 1.5;
+  }
+
+  a {
+    font-size: 16px;
+    text-decoration: underline;
+  }
+
+  p {
+    margin: 0;
+    margin-top: 16px;
+  }
+}
+
+@media (max-width: 768px) {
+  .sbw-exhibits > ul { 
+    grid-template-columns: 1fr;
+  }
+
+  .sbw-exhibits .sbw-exhibits-listItem {
+    width: 100%;
+  }
+
+  .sbw-exhibits-item-readmore {
+		padding: 13px 18px;
+	}
+
+	.sbw-exhibits-item-readmore-arrow::after {
+		right: 16px;
+	}
+
+}
