@@ -1,5 +1,5 @@
 import {
-  buildBlock,
+  // buildBlock,
   loadHeader,
   loadFooter,
   decorateButtons,
@@ -12,21 +12,6 @@ import {
   loadSections,
   loadCSS,
 } from './aem.js';
-
-/**
- * Builds hero block and prepends to main in a new section.
- * @param {Element} main The container element
- */
-function buildHeroBlock(main) {
-  const h1 = main.querySelector('h1');
-  const picture = main.querySelector('picture');
-  // eslint-disable-next-line no-bitwise
-  if (h1 && picture && (h1.compareDocumentPosition(picture) & Node.DOCUMENT_POSITION_PRECEDING)) {
-    const section = document.createElement('div');
-    section.append(buildBlock('hero', { elems: [picture, h1] }));
-    main.prepend(section);
-  }
-}
 
 /**
  * load fonts.css and set a session storage flag
@@ -46,7 +31,7 @@ async function loadFonts() {
  */
 function buildAutoBlocks(main) {
   try {
-    buildHeroBlock(main);
+    // buildHeroBlock(main);
   } catch (error) {
     // eslint-disable-next-line no-console
     console.error('Auto Blocking failed', error);
@@ -89,6 +74,29 @@ function replaceDivsWithSections(main) {
 }
 
 /**
+ * Teriaryボタン
+ * @param {Element} element container element
+ */
+function decorateTertiaryButtons(element) {
+  element.querySelectorAll('p > strong > em > a').forEach((a) => {
+    const p = a.parentElement.parentElement.parentElement;
+    if (
+      // 親要素の構造を確認
+      a.parentElement.tagName === 'EM'
+      && a.parentElement.parentElement.tagName === 'STRONG'
+      && p.tagName === 'P'
+      // 各要素が単一の子要素のみを持つことを確認
+      && a.parentElement.childNodes.length === 1
+      && a.parentElement.parentElement.childNodes.length === 1
+      && p.childNodes.length === 1
+    ) {
+      a.className = 'button tertiary';
+      p.classList.add('button-container');
+    }
+  });
+}
+
+/**
  * Decorates the main element.
  * @param {Element} main The main element
  */
@@ -96,6 +104,7 @@ function replaceDivsWithSections(main) {
 export function decorateMain(main) {
   // hopefully forward compatible button decoration
   decorateButtons(main);
+  decorateTertiaryButtons(main);
   decorateIcons(main);
   buildAutoBlocks(main);
   decorateSections(main);

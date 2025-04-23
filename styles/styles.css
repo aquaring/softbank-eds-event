@@ -23,6 +23,9 @@
   --border-black-02: #616161CC; /* #616161 · 80% */
   --border-black-03: #555;
 
+  /* colors button */
+  --button-black: #1C1C1C;
+
   /* fonts */
   --body-font-family: "Noto Sans JP", "Hiragino Kaku Gothic ProN", "Hiragino Sans", system-ui, sans-serif;
   --heading-font-family: "Noto Sans JP", "Hiragino Kaku Gothic ProN", "Hiragino Sans", system-ui, sans-serif;
@@ -230,7 +233,7 @@ button.secondary {
 
 a.button.tertiary,
 button.tertiary {
-    background-color: var(--background-black);
+    background-color: var(--button-black);
 }
 
 /* images */
