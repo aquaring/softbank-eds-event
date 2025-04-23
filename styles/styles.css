@@ -11,6 +11,7 @@
 
   /* colors text */
   --text-black: #323232;
+  --text-black-dark: #000;
   --text-blue: #007BFF;
   --text-white: #FFF;
 
@@ -30,6 +31,7 @@
   --body-font-family: "Noto Sans JP", "Hiragino Kaku Gothic ProN", "Hiragino Sans", system-ui, sans-serif;
   --heading-font-family: "Noto Sans JP", "Hiragino Kaku Gothic ProN", "Hiragino Sans", system-ui, sans-serif;
   --heading-font-family-en: "Aboreto", "Hiragino Kaku Gothic ProN", "Hiragino Sans", system-ui, sans-serif;
+  --header-font-family-en: "Plus Jakarta Sans", "Hiragino Kaku Gothic ProN", "Hiragino Sans", system-ui, sans-serif;
 
   /* body sizes */
   --body-font-size-default: 16px;
