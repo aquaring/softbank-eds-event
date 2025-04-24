@@ -65,7 +65,6 @@
   font-weight: 700;
   line-height: 1.4;
   margin-top: auto;
-  border-radius: 0 0 8px 8px;
 }
 
 .sbw-exhibits-item-readmore-arrow {
@@ -125,6 +124,12 @@
   p {
     margin: 0;
     margin-top: 16px;
+  }
+}
+
+@media (max-width: 992px) {
+  .sbw-exhibits > ul {
+    grid-template-columns: repeat(2, 1fr);
   }
 }
 
