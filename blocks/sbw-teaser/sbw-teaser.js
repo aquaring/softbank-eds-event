@@ -12,7 +12,12 @@ export default function decorate(block) {
   // 背景画像の設定
   const bgImage = section.getAttribute('data-background');
   if (bgImage) {
-    section.style.backgroundImage = `url(${bgImage})`;
+    // ?width=以降のパラメータを削除
+    const cleanBgImage = bgImage.includes('?width=') 
+      ? bgImage.substring(0, bgImage.indexOf('?width='))
+      : bgImage;
+    
+    section.style.backgroundImage = `url(${cleanBgImage})`;
   }
   
   // 内部のdivにクラス名を追加
