@@ -39,6 +39,126 @@ function buildAutoBlocks(main) {
 }
 
 /**
+ * URLから?width=以降のパラメータを削除する
+ * @param {string} url 処理対象のURL
+ * @returns {string} パラメータを削除したURL
+ */
+function cleanImageUrl(url) {
+  if (!url) return '';
+  return url.includes('?width=') 
+    ? url.substring(0, url.indexOf('?width='))
+    : url;
+}
+
+/**
+ * sbw-section-bg-imgクラスを持つセクションを処理する
+ * data-title、data-subtitle、data-backgroundの処理を行う
+ * @param {Element} main メイン要素
+ */
+function processBgImgSections(main) {
+  /**
+   * タイトルとサブタイトルからhgroup要素を作成
+   * @param {string} title タイトルテキスト
+   * @param {string} subtitle サブタイトルテキスト
+   * @returns {HTMLElement|null} 作成したhgroup要素、またはnull
+   */
+  function createHeadingGroup(title, subtitle) {
+    if (!title && !subtitle) return null;
+    
+    const hgroup = document.createElement('hgroup');
+    
+    if (title) {
+      const h2 = document.createElement('h2');
+      h2.className = 'sbw-section-bg-img-content-title';
+      h2.textContent = title;
+      hgroup.appendChild(h2);
+    }
+    
+    if (subtitle) {
+      const p = document.createElement('p');
+      p.className = 'sbw-section-bg-img-content-text';
+      p.textContent = subtitle;
+      hgroup.appendChild(p);
+    }
+    
+    return hgroup;
+  }
+  
+  /**
+   * PCとSP用の背景画像を設定する
+   * @param {HTMLElement} section 背景画像を設定するセクション要素
+   */
+  function setupBackgroundImages(section) {
+    const bgImage = section.dataset.background;
+    const bgImageSp = section.dataset.backgroundSp;
+    
+    if (!bgImage) return;
+    
+    // PC用の背景画像を設定
+    const cleanBgImage = cleanImageUrl(bgImage);
+    section.style.backgroundImage = `url(${cleanBgImage})`;
+    
+    // SP用の背景画像があれば、メディアクエリで切り替える
+    if (bgImageSp) {
+      const cleanBgImageSp = cleanImageUrl(bgImageSp);
+      
+      // CSSでメディアクエリを使って背景画像を切り替える
+      const styleEl = document.createElement('style');
+      styleEl.textContent = `
+        @media (width <= 768px) {
+          #${section.id || `section-${Date.now()}`} {
+            background-image: url(${cleanBgImageSp}) !important;
+          }
+        }
+      `;
+      
+      // セクションにIDがなければ設定
+      if (!section.id) {
+        section.id = `section-${Date.now()}`;
+      }
+      
+      document.head.appendChild(styleEl);
+    }
+  }
+  
+  // sbw-section-bg-imgクラスを持つセクションを検索
+  const bgImgSections = [...main.querySelectorAll('section.sbw-section-bg-img')];
+  
+  bgImgSections.forEach((section) => {
+    try {
+      // 1. 背景画像の設定
+      setupBackgroundImages(section);
+      
+      // 2. 子要素を一時保存
+      const childElements = Array.from(section.children);
+      childElements.forEach(child => child.remove());
+      
+      // 3. ラッパーとコンテンツ領域の作成
+      const wrapDiv = document.createElement('div');
+      wrapDiv.className = 'sbw-section-bg-img-wrap';
+      
+      const contentsDiv = document.createElement('div');
+      contentsDiv.className = 'sbw-section-bg-img-contents';
+      
+      // 4. タイトル・サブタイトルの処理
+      const hgroup = createHeadingGroup(section.dataset.title, section.dataset.subtitle);
+      if (hgroup) {
+        wrapDiv.appendChild(hgroup);
+      }
+      
+      // 5. 元の子要素をコンテンツ領域に追加
+      childElements.forEach(child => contentsDiv.appendChild(child));
+      
+      // 6. 要素を組み立て
+      wrapDiv.appendChild(contentsDiv);
+      section.appendChild(wrapDiv);
+    } catch (e) {
+      console.error('BgImg section processing error:', e);
+    }
+  });
+}
+
+/**
  * divタグをsectionタグに変換する
  * セクションのロードが完了した後にだけ実行すること
  * @param {Element} main メイン要素
@@ -172,6 +292,8 @@ async function loadPage() {
   const main = document.querySelector('main');
   if (main) {
     replaceDivsWithSections(main);
+    // sbw-section-bg-imgクラスを持つセクションを処理
+    processBgImgSections(main);
   }
   
   loadDelayed();
