@@ -449,7 +449,6 @@ main > .section{
 section.sbw-section-bg-img{
     max-width: 100%;
     background-repeat: no-repeat;
-    background-position: bottom center;
     background-size: cover;
     padding: 0;
 
@@ -479,50 +478,46 @@ section.sbw-section-bg-img{
         align-items: center;
         text-align: center;
         gap: 8px;
+    }
+    .sbw-section-bg-img-content-title,
+    .sbw-section-bg-img-content-text {
+        overflow-wrap: break-word;
+        word-wrap: break-word;
+        word-break: break-word;
+        hyphens: auto;
+    }
+    .sbw-section-bg-img-content-title {
+        font-family: var(--heading-font-family-en);
+        font-size: 80px;
+        font-weight: 400;
+        line-height: 1;
+        color: var(--text-black);
+        margin-block: 0;
+        max-width: 100%;
 
-        .sbw-section-bg-img-content-title,
-        .sbw-section-bg-img-content-text {
-            overflow-wrap: break-word;
-            word-wrap: break-word;
-            word-break: break-word;
-            hyphens: auto;
+        @media (width <= 768px) {
+            font-size: 56px;
         }
-        .sbw-section-bg-img-content-title {
-            font-family: var(--heading-font-family-en);
-            font-size: 80px;
-            font-weight: 400;
-            line-height: 1;
-            color: var(--text-black);
-            margin-block: 0;
-            max-width: 100%;
-
-            @media (width <= 768px) {
-                font-size: 56px;
-            }
-        }
-        .sbw-section-bg-img-content-text {
-            display: inline-block;
-            font-size: 16px;
-            font-weight: 500;
-            line-height: 1.5;
-            letter-spacing: 0.06em;
-            background: linear-gradient(90deg, #A3B8FF 0%, #CD98FF 80%, #FF72FF 100%);
-            margin: 0;
-            background-clip: text;
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            color: transparent;
-        }
-
+    }
+    .sbw-section-bg-img-content-text {
+        display: inline-block;
+        font-size: 16px;
+        font-weight: 500;
+        line-height: 1.5;
+        letter-spacing: 0.06em;
+        background: linear-gradient(90deg, #A3B8FF 0%, #CD98FF 80%, #FF72FF 100%);
+        margin: 0;
+        background-clip: text;
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        color: transparent;
     }
 
     /* バリエーション */
     /* 文字色白 */
     &.text-white{
-        hgroup{
-            .sbw-section-bg-img-content-title{
-                color: var(--text-white);
-            }
+        .sbw-section-bg-img-content-title{
+            color: var(--text-white);
         }
     }
     /* 見出し左寄せ */
@@ -530,13 +525,12 @@ section.sbw-section-bg-img{
         hgroup{
             text-align: left;
             align-items: flex-start;
+        }
+        .sbw-section-bg-img-content-title{
+            font-size: 56px;
 
-            .sbw-section-bg-img-content-title{
-                font-size: 56px;
-
-                @media (width <= 768px) {
-                    font-size: 40px;
-                }
+            @media (width <= 768px) {
+                font-size: 40px;
             }
         }
     }
