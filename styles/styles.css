@@ -274,12 +274,12 @@ p sub {
 
 /* sections */
 main{
-    padding-bottom: 80px;
+    /* padding-bottom: 80px; */
     overflow-x: hidden;
 
-    @media (width <= 768px) {
+    /* @media (width <= 768px) {
         padding-bottom: 40px;
-    }
+    } */
 }
 main:has(.section > .contact-multi-wrapper:last-child),
 main:has(.section > .contact-simple-wrapper:last-child),

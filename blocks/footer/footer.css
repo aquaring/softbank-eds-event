@@ -7,12 +7,9 @@ footer{
     .global{
         background: var(--background-gray-02);
         padding: 36px;
-        border-top: 4px solid #0080F4;
-        box-shadow: 0 10px 10px -3px rgb(0 0 0 / 40%) inset;
 
         @media (width <= 768px) {
             padding: 32px 0;
-            box-shadow: 0 5px 5px -3px rgb(0 0 0 / 40%) inset;
         }
 
         ul{
