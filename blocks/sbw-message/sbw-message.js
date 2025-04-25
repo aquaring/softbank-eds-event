@@ -38,5 +38,16 @@ export default function decorate(block) {
   const secondRow = block.children[1];
   if (secondRow) {
     secondRow.classList.add('sbw-message-contents');
+    
+    // 画像とテキストのdivにクラスを追加
+    const imgDiv = secondRow.children[0];
+    if (imgDiv) {
+      imgDiv.classList.add('sbw-message-img');
+    }
+    
+    const textDiv = secondRow.children[1];
+    if (textDiv) {
+      textDiv.classList.add('sbw-message-text');
+    }
   }
 }
