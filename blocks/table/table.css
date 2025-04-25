@@ -1,0 +1,136 @@
+.table-container {
+
+    .table-wrapper{
+        margin-top: 32px;
+
+        @media (width <= 768px) {
+            margin-top: 20px;
+        }
+    }
+
+    /* 表組みのタイトル */
+    .default-content-wrapper:has(h5) + .table-wrapper{
+        margin-top: 8px;
+    }
+
+    .default-content-wrapper{
+        h5{
+            @media (width <= 768px) {
+                font-size: 14px;
+            }
+        }
+    }
+
+    /* テーブル上のテキスト */
+    &.table-top-text-right{
+        .default-content-wrapper:has(p){
+            p{
+                text-align: right;
+            }
+        }
+    }
+    &.table-top-text-center{
+        .default-content-wrapper:has(p){
+            p{
+                text-align: center;
+            }
+        }
+    }
+    &.table-top-text-left{
+        .default-content-wrapper:has(p){
+            p{
+                text-align: left;
+            }
+        }
+    }
+
+    &.table-top-text-right,
+    &.table-top-text-center,
+    &.table-top-text-left{
+        .default-content-wrapper:has(p){
+            + .table-wrapper{
+                margin-top: 8px;
+            }
+
+            margin-top: 32px;
+
+            @media (width <= 768px) {
+                margin-top: 20px;
+            }
+        }
+    }
+}
+
+.table{
+    table {
+        width: 100%;
+        overflow-x: auto;
+        border-collapse: collapse;
+        font-size: var(--body-font-size-default);
+
+        @media (width <= 768px) {
+            font-size: 12px;
+        }
+
+        tr{
+            th, td{
+                padding: 16px;
+                border: 1px solid var(--border-black-02);
+
+                @media (width <= 768px) {
+                    padding: 8px;
+                }
+            }
+
+            th{
+                width: 240px;
+                text-align: center;
+                background-color: var(--background-gray-01);
+
+                @media (width <= 768px) {
+                    width: 120px;
+                }
+
+                > p:first-child{
+                    margin-top: 0;
+                }
+            }
+
+            td{
+                text-align: left;
+
+                > p:first-child{
+                    margin-top: 0;
+                }
+            }
+        }
+    }
+
+    &.gray01{
+        table{
+            tr{
+                th{
+                    background-color: #f0f0f0;
+                }
+            }
+        }
+    }
+    &.gray02{
+        table{
+            tr{
+                th{
+                    background-color: #d9d9d9;
+                }
+            }
+        }
+    }
+    &.gray03{
+        table{
+            tr{
+                th{
+                    background-color: #bfbfbf;
+                }
+            }
+        }
+    }
+}
