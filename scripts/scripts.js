@@ -26,6 +26,21 @@ async function loadFonts() {
 }
 
 /**
+ * autolinkModals
+ */
+function autolinkModals(element) {
+  element.addEventListener('click', async (e) => {
+    const origin = e.target.closest('a');
+
+    if (origin && origin.href && origin.href.includes('/modals/')) {
+      e.preventDefault();
+      const { openModal } = await import(`${window.hlx.codeBasePath}/blocks/modal/modal.js`);
+      openModal(origin.href);
+    }
+  });
+}
+
+/**
  * Builds all synthetic blocks in a container element.
  * @param {Element} main The container element
  */
@@ -166,7 +181,19 @@ function processBgImgSections(main) {
  */
 function replaceDivsWithSections(main) {
   // セクションクラスを持つdivのみを検索
-  const sectionDivs = [...main.querySelectorAll('div.section')];
+  // フラグメントコンテナー直下のdiv.sectionと、フラグメントラッパー直下のdiv.sectionは変換対象に含める
+  const sectionDivs = [...main.querySelectorAll('div.section')]
+    .filter(div => {
+      const fragmentContainer = div.closest('.fragment-container');
+      const fragmentWrapper = div.closest('.fragment-wrapper');
+      
+      // フラグメントコンテナー内にない場合は変換対象
+      if (!fragmentContainer) return true;
+      
+      // フラグメントコンテナーの直下、またはフラグメントラッパーの直下の場合は変換対象
+      return div.parentElement === fragmentContainer || 
+             (fragmentWrapper && div.parentElement === fragmentWrapper);
+    });
   
   sectionDivs.forEach((div) => {
     try {
@@ -261,6 +288,7 @@ async function loadEager(doc) {
  * @param {Element} doc The container element
  */
 async function loadLazy(doc) {
+  autolinkModals(doc);
   const main = doc.querySelector('main');
   await loadSections(main);
 

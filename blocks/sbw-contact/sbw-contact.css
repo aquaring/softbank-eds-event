@@ -1,0 +1,151 @@
+.sbw-section-bg-img.sbw-section-contact{
+    max-width: 100%;
+    padding: 0;
+
+    .sbw-section-bg-img-wrap{
+        padding: 64px 120px 75px 120px;
+
+        @media only screen and (width <= 768px){
+            padding: 64px 24px;
+        }
+    }
+
+    .sbw-section-bg-img-contents{
+        margin-top: 0;
+    }
+}
+
+.sbw-contact-header{
+    text-align: center;
+
+    h2{
+        color: var(--text-white);
+        font-size: 20px;
+        font-weight: 700;
+        line-height: 125%;
+        margin: 0;
+
+        @media only screen and (width <= 768px){
+            font-size: 16px;
+        }
+    }
+    p{
+        color: var(--text-white);
+        font-size: 16px;
+        font-weight: 400;
+        line-height: 150%;
+        margin-top: 16px;
+
+        @media only screen and (width <= 768px){
+            margin-top: 12px;
+        }
+    }
+}
+
+.sbw-contact-inner{
+    display: flex;
+    width: 100%;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin: 0 auto;
+
+    @media only screen and (width <= 768px){
+        margin-top: 32px;
+    }
+
+    > div{
+        width: 100%;
+
+        > div{
+            display: flex;
+            width: 100%;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            padding: 32px 20px 0;
+            box-sizing: border-box;
+
+            @media only screen and (width <= 768px){
+                padding: 16px 20px 0;
+            }
+
+            h3{
+                font-size: 18px;
+                font-weight: 700;
+                line-height: 125%; /* 22.5px */
+                margin-top: 0;
+
+                @media only screen and (width <= 768px){
+                    font-size: 16px;
+                }
+            }
+
+            p{
+                margin: 0;
+                width: 100%;
+            }
+ 
+            /* テキスト+ボタンの場合 */
+            h3 + p.button-container{
+                margin-top: 16px;
+
+                @media only screen and (width <= 768px){
+                    margin-top: 10px;
+                }
+            }
+
+            /* Secondaryボタンの場合 */
+            a.button.secondary{
+                border: 1px solid var(--border-gray);
+                background-color: var(--background-color);
+            }
+
+            /* ボタンサイズの変更 */
+            a.button:any-link, button{
+                display: flex;
+                width: calc(256px + (32px * 2));
+                padding: 16px 32px;
+                justify-content: center;
+                align-items: center;
+                gap: 8px;
+                box-sizing: border-box;
+
+                @media only screen and (width <= 768px){
+                    width: 100%;
+                }
+            }
+        }
+    }
+}
+
+/* クラスのパターン */
+.sbw-contact{
+    /* ボタン数 */
+    &.button2,
+    &.button3,
+    &.button4,
+    &.button5 {
+        .sbw-contact-inner{
+            > div{
+                width: auto;
+                max-width: 400px;
+            }
+        }
+    }
+}
+
+@media only screen and (width <= 768px){
+    .sbw-contact{
+        /* ボタン数 */
+        &.button2,
+        &.button3,
+        &.button4,
+        &.button5 {
+            .sbw-contact-inner{
+                > div{
+                    width: 100% !important;
+                }
+            }
+        }
+    }
+}
