@@ -23,12 +23,19 @@ export default function decorate(block) {
     { width: `${blockLength <= 1 ? '900' : '600'}` }
   ];
 
-  // containerを作成
-  const container = document.createElement('div');
+  // containerをolに変更
+  const container = document.createElement('ol');
   container.className = containerClass;
 
   [...block.children].forEach((row, rowIndex) => {
-    // 全体をリンクエリアに変換
+    // リストアイテムを作成
+    const listItem = document.createElement('li');
+    listItem.className = itemWrapperClass;
+    
+    // articleを作成
+    const article = document.createElement('article');
+    
+    // リンク要素を作成
     const card = document.createElement('a');
     card.className = itemClass;
     
@@ -111,8 +118,14 @@ export default function decorate(block) {
     // cardInnerをカードに追加
     card.appendChild(cardInner);
     
-    // カードをコンテナに追加
-    container.appendChild(card);
+    // カードをarticleに追加
+    article.appendChild(card);
+    
+    // articleをリストアイテムに追加
+    listItem.appendChild(article);
+    
+    // リストアイテムをコンテナに追加
+    container.appendChild(listItem);
   });
 
   // pictureを最適化
