@@ -59,7 +59,7 @@ section.sbw-section-bg-img.sbw-section-message{
             margin-top: 80px;
         }
 
-        > div:has(picture){
+        .sbw-message-img{
             max-width: 480px;
             border-radius: 4px;
             overflow: hidden;
@@ -70,7 +70,7 @@ section.sbw-section-bg-img.sbw-section-message{
                 object-fit: cover;
             }
         }
-        > div:has(p){
+        .sbw-message-text{
             max-width: 600px;
 
             p{
