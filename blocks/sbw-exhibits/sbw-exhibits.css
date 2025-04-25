@@ -29,15 +29,12 @@
 
 .sbw-exhibits-item-image {
   width: 100%;
+  aspect-ratio: 16 / 9;
   overflow: hidden;
-  picture {
+  img {
     width: 100%;
-    img {
-      width: 100%;
-      aspect-ratio: 16 / 9;
-      transition: 0.3s;
-      transform-origin: center center;
-    }
+    height: 100%;
+    object-fit: cover;
   }
 }
 
