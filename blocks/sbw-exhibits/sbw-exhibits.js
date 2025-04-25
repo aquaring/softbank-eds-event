@@ -28,17 +28,15 @@ export default function decorate(block) {
 
   [...block.children].forEach((row) => {
 
-    // 全体をリンクエリアに変換／見出しタグがあれば、rowをsectionに変換
+    // 見出しタグ、リンクの有無を確認
     const isHeading = row.querySelector('h2, h3, h4, h5, h6');
     const hasLink = row.querySelector('a');
     const isLinkAll = (block.classList.contains('link-all') && hasLink) || hasLink;
-    // const hasTags = row.querySelector('a');
-    const section = document.createElement(isLinkAll ? 'a' : isHeading ? 'section' : 'div');
+    
+    // sectionInnerの作成
     const sectionInner = document.createElement('div');
-    section.className = itemClass;
     sectionInner.className = itemInnerClass;
     sectionInner.append(...row.childNodes);
-    section.append(sectionInner);
 
     // 各子要素にクラスを追加
     [...sectionInner.children].forEach((child, index) => {
@@ -57,11 +55,15 @@ export default function decorate(block) {
       }
     });
 
+    // リンクまたはdivを作成
+    const contentElement = document.createElement(isLinkAll ? 'a' : 'div');
+    contentElement.className = itemClass;
+    
     // 全体がリンクエリアの場合、hrefを設定し、もとの要素を削除
     if (isLinkAll) {
       const innerLink = sectionInner.querySelector('a');
-      section.href = innerLink.href;
-      section.classList.add('-link');
+      contentElement.href = innerLink.href;
+      contentElement.classList.add('-link');
       
       // Read moreテキストを追加
       const readMoreElement = document.createElement('div');
@@ -78,13 +80,20 @@ export default function decorate(block) {
         innerLink.closest('div').remove();
       }
       
-      // Read moreをsectionInnerの最後に追加 (セクションではなくインナーに追加)
+      // Read moreをsectionInnerの最後に追加
       sectionInner.appendChild(readMoreElement);
     }
+    
+    // sectionInnerをcontentElementに追加
+    contentElement.appendChild(sectionInner);
+    
+    // article要素を作成
+    const article = document.createElement('article');
+    article.appendChild(contentElement);
 
     // 要素が1つの場合は直接追加
     if (blockLength === 1) {
-      container.append(section);
+      container.append(article);
     } else {
       const li = document.createElement('li');
       li.className = itemWrapperClass;
@@ -93,13 +102,13 @@ export default function decorate(block) {
       li.style.padding = '0';
       li.style.border = 'none';
 
-      // アイテムをリストに追加
-      li.append(section);
+      // articleをリストに追加
+      li.append(article);
       container.append(li);
     }
 
     // リストのclass付け
-    // すべてのulにitemListsClassをつける（itemTagsClass関連のコードを削除）
+    // すべてのulにitemListsClassをつける
     const listElements = sectionInner.querySelectorAll('ul');
     listElements.forEach((ul) => {
       ul.className = itemListsClass;

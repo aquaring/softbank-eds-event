@@ -10,6 +10,23 @@
   border-bottom: 1px solid var(--border-gray-dark);
 }
 
+/* リンク付きのスタイル */
+.sbw-exhibits-item.-link {
+    text-decoration: none;
+    cursor: pointer;
+    transition: transform 0.3s ease;
+}
+
+.sbw-exhibits-item.-link:hover {
+    transform: scale(1.02);
+}
+
+.sbw-exhibits article {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
 .sbw-exhibits-item-image {
   width: 100%;
   overflow: hidden;
@@ -39,17 +56,6 @@
   border: none;
   margin: 0;
   padding: 0;
-}
-
-/* リンク付きのスタイル */
-.sbw-exhibits-item.-link {
-  text-decoration: none;
-  cursor: pointer;
-  &:hover {
-    .sbw-exhibits-item-image img {
-      transform: scale(1.02);
-    }
-  }
 }
 
 /* Read moreボタンのスタイル */
@@ -88,6 +94,7 @@
   flex-direction: column;
   flex: 1;
   border: none;
+  background-color: var(--background-color);
 }
 
 .sbw-exhibits {
