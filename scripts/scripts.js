@@ -87,8 +87,9 @@ function processBgImgSections(main) {
   /**
    * PCとSP用の背景画像を設定する
    * @param {HTMLElement} section 背景画像を設定するセクション要素
+   * @param {number} index セクションのインデックス
    */
-  function setupBackgroundImages(section) {
+  function setupBackgroundImages(section, index) {
     const bgImage = section.dataset.background;
     const bgImageSp = section.dataset.backgroundSp;
     
@@ -102,20 +103,20 @@ function processBgImgSections(main) {
     if (bgImageSp) {
       const cleanBgImageSp = cleanImageUrl(bgImageSp);
       
+      // セクションに一意のIDを設定
+      if (!section.id) {
+        section.id = `section-bg-${index}`;
+      }
+      
       // CSSでメディアクエリを使って背景画像を切り替える
       const styleEl = document.createElement('style');
       styleEl.textContent = `
         @media (width <= 768px) {
-          #${section.id || `section-${Date.now()}`} {
+          #${section.id} {
             background-image: url(${cleanBgImageSp}) !important;
           }
         }
       `;
-      
-      // セクションにIDがなければ設定
-      if (!section.id) {
-        section.id = `section-${Date.now()}`;
-      }
       
       document.head.appendChild(styleEl);
     }
@@ -124,10 +125,10 @@ function processBgImgSections(main) {
   // sbw-section-bg-imgクラスを持つセクションを検索
   const bgImgSections = [...main.querySelectorAll('section.sbw-section-bg-img')];
   
-  bgImgSections.forEach((section) => {
+  bgImgSections.forEach((section, index) => {
     try {
       // 1. 背景画像の設定
-      setupBackgroundImages(section);
+      setupBackgroundImages(section, index);
       
       // 2. 子要素を一時保存
       const childElements = Array.from(section.children);
