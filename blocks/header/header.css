@@ -43,6 +43,7 @@ header.header-wrapper {
 
 .header-btn .default-content-wrapper .button {
   padding: 8px 20px;
+	font-weight: 600;
 }
 
 .header-btn .default-content-wrapper .button::after {
@@ -292,6 +293,7 @@ header.header-wrapper {
     width: 100%;
     box-sizing: border-box;
     text-align: center;
+	font-weight: 700;
     justify-content: center;
     padding-block: 16px;
   }
