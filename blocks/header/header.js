@@ -125,15 +125,6 @@ export default async function decorate(block) {
     block.append(fragment.firstElementChild);
   }
   
-  // p > emタグを持つ要素にSP表示用のクラスを追加
-  const pTagsWithEm = block.querySelectorAll('p > em');
-  pTagsWithEm.forEach(emTag => {
-    const parentP = emTag.parentElement;
-    if (parentP) {
-      parentP.classList.add('sp-only');
-    }
-  });
-  
   // ヘッダー内の3つのdivにクラスを付与
   const headerDivs = Array.from(block.querySelectorAll('.header > div')).filter(div => !div.classList.contains('hamburger-container'));
   if (headerDivs.length >= 3) {
@@ -148,24 +139,8 @@ export default async function decorate(block) {
     processButton(headerLogo, 'logo-link', 'logo');
   }
   
-  // sp-onlyクラスを持つ要素をheader-btnクラスの中に移動
-  const spOnlyTexts = block.querySelectorAll('.sp-only');
-  const headerBtn = block.querySelector('.header-btn');
-  if (headerBtn && spOnlyTexts.length > 0) {
-    spOnlyTexts.forEach(spText => {
-      // 元の親から削除
-      spText.parentElement.removeChild(spText);
-      // header-btnの直下の先頭に追加（default-content-wrapperの前）
-      const defaultContentWrapper = headerBtn.querySelector('.default-content-wrapper');
-      if (defaultContentWrapper) {
-        headerBtn.insertBefore(spText, defaultContentWrapper);
-      } else {
-        headerBtn.appendChild(spText);
-      }
-    });
-  }
-  
   const headerMenu = block.querySelector('.header-menu');
+  const headerBtn = block.querySelector('.header-btn');
   
   // SP用メニューの作成（PCのメニューとボタンを渡す）
   const spMenu = createSPMenu(headerMenu, headerBtn);
