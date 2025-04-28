@@ -15,20 +15,26 @@ main > .section.sbw-teaser-container{
 }
 
 /* ロゴ */
-.sbw-teaser-logo-main img{
-    width: 336px;
+.sbw-teaser-logo-main{
+    margin: 0;
 
-    @media (width <= 768px) {
-        width: 290px;
+    img{
+        width: 336px;
+
+        @media (width <= 768px) {
+            width: 290px;
+        }
     }
 }
-.sbw-teaser-logo-sub img{
-    width: 430px;
-    margin-top: 16px;
-
-    @media (width <= 768px) {
-        width: 327px;
-        margin-top: 20px;
+.sbw-teaser-logo-sub{
+    img{
+        width: 430px;
+        margin-top: 16px;
+    
+        @media (width <= 768px) {
+            width: 327px;
+            margin-top: 20px;
+        }
     }
 }
 

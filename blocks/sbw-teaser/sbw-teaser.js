@@ -29,7 +29,13 @@ export default function decorate(block) {
     
     // メインロゴとサブロゴにクラス追加
     if (logoItems.length >= 2) {
-      logoItems[0].classList.add('sbw-teaser-logo-main');
+      // メインロゴをh1タグに変換
+      const mainLogo = logoItems[0];
+      const h1 = document.createElement('h1');
+      h1.className = 'sbw-teaser-logo-main';
+      h1.innerHTML = mainLogo.innerHTML;
+      mainLogo.parentNode.replaceChild(h1, mainLogo);
+      
       logoItems[1].classList.add('sbw-teaser-logo-sub');
     }
     
@@ -115,7 +121,7 @@ function setupAnimation(block) {
     }, 400);
   };
   
-  // DOMContentLoadedイベント後またはページロード後にアニメーションを開始
+  // DOMContentLoadedイベントでアニメーションを開始
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', startAnimation);
   } else {
