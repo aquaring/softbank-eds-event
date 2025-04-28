@@ -266,11 +266,18 @@ export function decorateMain(main) {
 async function loadEager(doc) {
   document.documentElement.lang = 'en';
   decorateTemplateAndTheme();
+  
+  // ヘッダーのスタイルを早期に読み込み
+  await loadCSS(`${window.hlx.codeBasePath}/blocks/header/header.css`);
+  
   const main = doc.querySelector('main');
   if (main) {
     decorateMain(main);
     document.body.classList.add('appear');
     await loadSection(main.querySelector('.section'), waitForFirstImage);
+    
+    // ヘッダーの読み込みをEagerに移動
+    loadHeader(doc.querySelector('header'));
   }
 
   try {
@@ -296,7 +303,6 @@ async function loadLazy(doc) {
   const element = hash ? doc.getElementById(hash.substring(1)) : false;
   if (hash && element) element.scrollIntoView();
 
-  loadHeader(doc.querySelector('header'));
   loadFooter(doc.querySelector('footer'));
 
   loadCSS(`${window.hlx.codeBasePath}/styles/lazy-styles.css`);
