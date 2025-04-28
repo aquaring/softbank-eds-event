@@ -69,16 +69,10 @@ const processButton = (element, newClassName, newContainerClassName) => {
  * @param {Element} block フッターブロック要素
  */
 export default async function decorate(block) {
-  // 現在のURLをチェックして適切なフッターパスを決定
-  const currentHost = window.location.hostname;
-  const defaultFooterPath = (currentHost === 'localhost' || currentHost.includes('main--softbank-eds-event--aquaring.aem.page'))
-    ? '/sbw/footer'
-    : '/footer';
-
-  const footerPath = getMetadata('footer')
-    ? new URL(getMetadata('footer'), window.location).pathname
-    : defaultFooterPath;
-  const footerFragment = await loadFooterFragment(footerPath);
+  // load footer as fragment
+  const footerMeta = getMetadata('footer');
+  const footerPath = footerMeta ? new URL(footerMeta, window.location).pathname : '/footer';
+  const footerFragment = await loadFragment(footerPath);
 
   block.textContent = '';
   const footerGlobal = createFooterGlobalDOM();

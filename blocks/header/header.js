@@ -102,7 +102,7 @@ function createSPMenu(headerMenu, headerBtn) {
 export default async function decorate(block) {
   // sbwフォルダのheader.docxを読み込む
   const navMeta = getMetadata('nav');
-  const navPath = navMeta ? new URL(navMeta, window.location).pathname : '/sbw/header';
+  const navPath = navMeta ? new URL(navMeta, window.location).pathname : '/header';
   const fragment = await loadFragment(navPath);
 
   // 読み込んだフラグメントを追加
