@@ -2,14 +2,13 @@ import { getMetadata } from '../../scripts/aem.js';
 import { loadFragment } from '../fragment/fragment.js';
 // import { buildBreadcrumbs } from '../../scripts/scripts.js';
 
-// media query match that indicates mobile/tablet width
+// PC/SPの切り替えのためのメディアクエリ
 const isDesktop = window.matchMedia('(min-width: 769px)');
 
 /**
- * Toggles the entire nav
- * @param {Element} nav The container element
- * @param {Element} navSections The nav sections within the container element
- * @param {Boolean} forceExpanded Optional param to force nav expand behavior when not null
+ * ナビゲーションセクション全体を切り替える
+ * @param {Element} sections ナビゲーションセクションのコンテナ
+ * @param {Boolean} expanded 展開状態
  */
 function toggleAllNavSections(sections, expanded = false) {
   sections.querySelectorAll('.nav-sections .default-content-wrapper > ul > li').forEach((section) => {
@@ -37,6 +36,12 @@ function toggleSPMenu() {
   }
 }
 
+/**
+ * メニューの表示/非表示を切り替える
+ * @param {Element} nav ナビゲーション要素
+ * @param {Element} navSections ナビゲーションセクション
+ * @param {Boolean} forceExpanded 強制的に展開状態を設定する場合の値
+ */
 function toggleMenu(nav, navSections, forceExpanded = null) {
   const expanded = forceExpanded !== null ? forceExpanded : nav.getAttribute('aria-expanded') === 'true';
   const isSP = !isDesktop.matches;
@@ -69,6 +74,9 @@ const processButton = (element, newClassName, newContainerClassName) => {
 /**
  * SPメニュー用のHTMLを作成
  * PCのヘッダーメニューとボタンを複製してSPメニューとして使用
+ * @param {HTMLElement} headerMenu ヘッダーメニュー要素
+ * @param {HTMLElement} headerBtn ヘッダーボタン要素
+ * @returns {HTMLElement} 作成したSPメニュー要素
  */
 function createSPMenu(headerMenu, headerBtn) {
   const spMenu = document.createElement('div');
@@ -91,28 +99,28 @@ function createSPMenu(headerMenu, headerBtn) {
   }
   
   spMenu.appendChild(spMenuContent);
-  
   document.body.appendChild(spMenu);
+  
   return spMenu;
 }
 
 /**
- * ヘッダーを読み込む
+ * ヘッダーを読み込み、初期化する
+ * @param {HTMLElement} block ヘッダーブロック要素
  */
 export default async function decorate(block) {
-  // sbwフォルダのheader.docxを読み込む
+  // フラグメントの読み込み
   const navMeta = getMetadata('nav');
   const navPath = navMeta ? new URL(navMeta, window.location).pathname : '/header';
   const fragment = await loadFragment(navPath);
 
-  // 読み込んだフラグメントを追加
+  // 既存コンテンツのクリア
   block.textContent = '';
   
-  // ハンバーガーメニュー用のdivを先に作成
+  // ハンバーガーメニューの作成
   const hamburgerDiv = document.createElement('div');
   hamburgerDiv.className = 'hamburger-container';
   
-  // ハンバーガーボタンの作成
   const hamburgerBtn = document.createElement('button');
   hamburgerBtn.className = 'hamburger-menu';
   hamburgerBtn.innerHTML = `<span></span><span></span><span></span>`;
@@ -120,52 +128,71 @@ export default async function decorate(block) {
   hamburgerDiv.appendChild(hamburgerBtn);
   block.appendChild(hamburgerDiv);
   
-  // フラグメントを追加
+  // フラグメントコンテンツの追加
   while (fragment.firstElementChild) {
     block.append(fragment.firstElementChild);
   }
   
-  // ヘッダー内の3つのdivにクラスを付与
-  const headerDivs = Array.from(block.querySelectorAll('.header > div')).filter(div => !div.classList.contains('hamburger-container'));
+  // ヘッダー内の要素にクラスを付与
+  const headerDivs = Array.from(block.querySelectorAll('.header > div')).filter(div => 
+    !div.classList.contains('hamburger-container')
+  );
+  
   if (headerDivs.length >= 3) {
     headerDivs[0].classList.add('header-logo');
     headerDivs[1].classList.add('header-menu');
     headerDivs[2].classList.add('header-btn');
   }
   
-  // ボタンの処理 - footer.jsと同様
+  // ロゴボタンの処理
   const headerLogo = block.querySelector('.header-logo');
   if (headerLogo) {
     processButton(headerLogo, 'logo-link', 'logo');
   }
   
+  // ヘッダーメニューとヘッダーボタンの取得
   const headerMenu = block.querySelector('.header-menu');
   const headerBtn = block.querySelector('.header-btn');
   
-  // SP用メニューの作成（PCのメニューとボタンを渡す）
+  // default-content-wrapperのdivをnavタグに変更
+  if (headerMenu) {
+    const defaultContentWrapper = headerMenu.querySelector('.default-content-wrapper');
+    if (defaultContentWrapper) {
+      const navElement = document.createElement('nav');
+      navElement.className = defaultContentWrapper.className;
+      
+      while (defaultContentWrapper.firstChild) {
+        navElement.appendChild(defaultContentWrapper.firstChild);
+      }
+      
+      defaultContentWrapper.replaceWith(navElement);
+    }
+  }
+  
+  // SPメニューの作成
   const spMenu = createSPMenu(headerMenu, headerBtn);
   
-  // ハンバーガーメニューのクリックイベント
+  // イベントリスナーの設定
   hamburgerBtn.addEventListener('click', toggleSPMenu);
   
-  // PCとSPの表示切り替えの際にハンバーガーメニューを表示/非表示
+  // 画面サイズ変更時の処理
   const mediaQueryHandler = (e) => {
     if (e.matches) {
-      // PCサイズの場合、ハンバーガーボタンを非表示
+      // PCサイズの場合
       hamburgerDiv.style.display = 'none';
+      
       // SPメニューが開いていれば閉じる
       if (spMenu.classList.contains('is-open')) {
         spMenu.classList.remove('is-open');
         document.body.style.overflow = '';
       }
     } else {
-      // SPサイズの場合、ハンバーガーボタンを表示
+      // SPサイズの場合
       hamburgerDiv.style.display = 'block';
     }
   };
   
-  // メディアクエリのリスナー登録
+  // メディアクエリイベントの登録と初期実行
   isDesktop.addEventListener('change', mediaQueryHandler);
-  // 初期表示時の処理
   mediaQueryHandler(isDesktop);
 }
