@@ -68,7 +68,7 @@ header.header-wrapper {
 
 .header-menu .default-content-wrapper ul li {
   list-style: none;
-  font-family: var(--header-font-family-en);
+  font-family: var(--heading-font-family);
   font-size: 14px;
   line-height: 1.5;
 }
@@ -89,18 +89,25 @@ header.header-wrapper {
 }
 
 /* ========== ハンバーガーメニュー ========== */
+.hamburger-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
 .hamburger-menu {
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  gap: 3px;
   width: 18px;
   height: 12px;
   background: transparent;
   border: none;
   cursor: pointer;
-  padding: 0;
+  padding: 15px;
+  margin: -15px;
   position: relative;
+  box-sizing: content-box;
 }
 
 .hamburger-menu::after {
@@ -109,8 +116,9 @@ header.header-wrapper {
 
 .hamburger-menu span {
   position: absolute;
-  left: 0;
-  width: 100%;
+  left: 15px;
+  right: 15px;
+  width: 18px;
   height: 2px;
   background-color: var(--text-black);
   display: block;
@@ -118,7 +126,7 @@ header.header-wrapper {
 }
 
 .hamburger-menu span:nth-child(1) {
-  top: 0;
+  top: 15px;
 }
 
 .hamburger-menu span:nth-child(2) {
@@ -127,7 +135,7 @@ header.header-wrapper {
 }
 
 .hamburger-menu span:nth-child(3) {
-  bottom: 0;
+  bottom: 15px;
 }
 
 /* ハンバーガーメニューのアクティブ状態 */
