@@ -99,8 +99,6 @@ function createSPMenu(headerMenu, headerBtn) {
   }
   
   spMenu.appendChild(spMenuContent);
-  document.body.appendChild(spMenu);
-  
   return spMenu;
 }
 
@@ -172,6 +170,9 @@ export default async function decorate(block) {
   // SPメニューの作成
   const spMenu = createSPMenu(headerMenu, headerBtn);
   
+  // SPメニューをヘッダー内に追加
+  block.appendChild(spMenu);
+  
   // イベントリスナーの設定
   hamburgerBtn.addEventListener('click', toggleSPMenu);
   
@@ -185,6 +186,11 @@ export default async function decorate(block) {
       if (spMenu.classList.contains('is-open')) {
         spMenu.classList.remove('is-open');
         document.body.style.overflow = '';
+        
+        // ハンバーガーメニューのアクティブ状態も解除
+        if (hamburgerBtn.classList.contains('is-active')) {
+          hamburgerBtn.classList.remove('is-active');
+        }
       }
     } else {
       // SPサイズの場合

@@ -83,6 +83,11 @@ header.header-wrapper {
   opacity: 0.6;
 }
 
+/* ボタン調整 */
+.header-btn .default-content-wrapper .button-container {
+  margin-top: 0;
+}
+
 /* ========== ハンバーガーメニュー ========== */
 .hamburger-menu {
   display: flex;
@@ -160,26 +165,37 @@ header.header-wrapper {
 	}
 }
 
+/* ========== SPメニュー基本スタイル ========== */
+.sp-menu {
+  display: none; /* デフォルトでは非表示 */
+  position: fixed;
+  top: 80px;
+  left: 0;
+  width: 100%;
+  height: calc(100% - 80px);
+  flex-direction: column;
+  background-color: var(--background-color);
+  z-index: 1000;
+  transform: translateX(100%);
+  transition: transform 0.3s ease;
+  overflow: auto;
+}
+
+.sp-menu.is-open {
+  display: flex; /* 開いたときに表示 */
+  transform: translateX(0);
+}
+
 /* ========== 早めにSPメニューを表示 ========== */
 @media (max-width: 900px) {
   /* SPメニュー */
   .sp-menu {
-    position: fixed;
-    top: 80px;
-    right: 0;
-    width: 100%;
-    height: calc(100% - 80px);
-    display: flex;
-    flex-direction: column;
-    background-color: var(--background-color);
-    z-index: 1000;
-    transform: translateX(100%);
-    transition: transform 0.3s ease;
-    overflow: scroll;
+    display: flex; /* SPサイズでは表示可能な状態に */
+    transform: translateX(100%); /* 初期状態では画面外 */
   }
 
   .sp-menu.is-open {
-    transform: translateX(0);
+    transform: translateX(0); /* 開いたときに表示 */
   }
 
   .sp-menu-content .header-menu ul {
@@ -246,11 +262,6 @@ header.header-wrapper {
   .hamburger-menu:hover,
   .hamburger-menu:focus {
     opacity: 1;
-  }
-  
-  /* ボタン調整 */
-  .header-btn .button-container {
-    margin-block: 0;
   }
   
   .header-btn .default-content-wrapper .button::after {
