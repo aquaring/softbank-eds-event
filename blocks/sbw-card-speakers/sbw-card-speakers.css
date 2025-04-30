@@ -1,0 +1,241 @@
+.sbw-card-speakers {
+  margin-top: 32px;
+}
+
+.sbw-card-speakers-item {
+  width: 100%;
+}
+
+
+.sbw-card-speakers-item-image {
+  width: 100%;
+  picture {
+    width: 100%;
+    img {
+      width: 100%;
+    }
+  }
+}
+
+.sbw-card-speakers > ul {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 32px 24px;
+}
+
+.sbw-card-speakers-listItem {
+  display: grid;
+  grid-template-rows: subgrid;
+  grid-row: span 2;
+  gap: 0;
+}
+.sbw-card-speakers-item {
+  transition: transform 0.3s ease;
+  background-color: var(--background-color);
+  border: 1px solid var(--border-gray);
+  border-radius: 8px;
+  overflow: hidden;
+  display: inherit;
+  grid-template-rows: inherit;
+  grid-row: inherit;
+}
+
+.sbw-card-speakers-item-inner {
+  height: 100%;
+  display: inherit;
+  grid-template-rows: inherit;
+  grid-row: inherit;
+}
+
+.sbw-card-speakers .sbw-card-speakers-listItem > .sbw-card-speakers-item.-link {
+  
+  &:hover{
+    transform: scale(1.02);
+  }
+}
+
+/* クラスのパターン */
+.sbw-card-speakers {
+  /* 線なし */
+  &.no-border .sbw-card-speakers-item {
+    box-shadow: none;
+    img {
+      border-radius: 8px;
+    }
+  }
+
+  /* 四角 */
+  &.no-radius .sbw-card-speakers-item {
+    border-radius: 0;
+  }
+
+  /* カラム */
+  &.col1 > ul {
+    grid-template-columns: 1fr;
+  }
+  &.col2 > ul {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  &.col3 > ul {
+    grid-template-columns: repeat(3, 1fr);
+    .buttons-wrapper {
+      flex-direction: column;
+    }
+  }
+  &.col4 > ul {
+    grid-template-columns: repeat(4, 1fr);
+    .buttons-wrapper {
+      flex-direction: column;
+    }
+  }
+  @media only screen and (width <= 768px){
+    &.col1 > ul,
+    &.col2 > ul,
+    &.col3 > ul,
+    &.col4 > ul {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  /* 見出しが上 */
+  &.above-heading .sbw-card-speakers-item {
+    .sbw-card-speakers-item-image {
+      order: 2;
+      padding: 0 24px;
+      img {
+        border-radius: 8px;
+      }
+    }
+    .sbw-card-speakers-item-body1 {
+      order: 1;
+      padding: 24px;
+    }
+    .sbw-card-speakers-item-body2 {
+      order: 3;
+    }
+  }
+
+  /* 画像にパディング */
+  &.img-padding .sbw-card-speakers-item {
+    .sbw-card-speakers-item-image {
+      padding: 24px 24px 0;
+      img {
+        border-radius: 8px;
+      }
+    }
+  }
+}
+
+.sbw-card-speakers {
+  .sbw-card-speakers-item-body1 {
+    padding: 24px;
+    > *:first-child {
+      margin-top: 0;
+    }
+  }
+  .sbw-card-speakers-item-body2 {
+    padding: 0 24px 32px;
+  }
+  .sbw-card-speakers-item-body1,
+  .sbw-card-speakers-item-body2 {
+  }
+  /* font系の設定 */
+  p, li {
+    color: #323232;
+    font-size: 16px;
+    font-weight: 400;
+    line-height: 1.5;
+  }
+
+  a {
+    font-size: 16px;
+  }
+
+  p{
+    margin: 0;
+    margin-top: 16px;
+  }
+
+  h3{
+    color: #323232;
+    font-size: 18px;
+    font-weight: 700;
+    line-height: 24px;
+    margin-top: 16px;
+  }
+
+  /* ボタン */
+  .buttons-wrapper {
+    margin-top: 32px;
+    display: flex;
+    gap: 8px;
+    .button-container {
+      margin-top: 0;
+      width: 100%;
+      .button {
+        width: 100%;
+      }
+    }
+  }
+
+  .sbw-card-speakers-item-lists{
+    margin-top: 16px;
+    li {
+      position: relative;
+      padding-left: 16px;
+      &::before {
+        content: "";
+        position: absolute;
+        left: 0;
+        top: 10px;
+        width: 5px;
+        height: 5px;
+        border-radius: 50%;
+        background-color: currentColor;
+      }
+    }
+  }
+
+  .sbw-card-speakers-item-tags{
+    margin-top: 32px;
+    display: flex;
+    width: 100%;
+    align-items: flex-start;
+    gap: 8px;
+    flex-wrap: wrap;
+
+    li{
+      display: flex;
+      padding: 4px 12px;
+      align-items: center;
+      gap: 8px;
+      border-radius: 4px;
+      background: #F4F8FA;
+      color: #323232;
+      font-size: 13px;
+      font-weight: 400;
+      line-height: 16.5px;
+    }
+  }
+}
+
+.sbw-card-speakers .sbw-card-speakers-card-image-section {
+  line-height: 0;
+}
+
+.sbw-card-speakers1-listItem > a img {
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  object-fit: cover;
+}
+
+@media only screen and (width <= 768px){
+  .sbw-card-speakers > ul { 
+    grid-template-columns: 1fr;
+  }
+
+  .sbw-card-speakers .sbw-card-speakers-listItem{
+    width: 100%;
+  }
+
+}
