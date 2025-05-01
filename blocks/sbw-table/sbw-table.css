@@ -1,6 +1,6 @@
-.table-container {
+.sbw-table-container {
 
-    .table-wrapper{
+    .sbw-table-wrapper{
         margin-top: 32px;
 
         @media (width <= 768px) {
@@ -9,7 +9,7 @@
     }
 
     /* 表組みのタイトル */
-    .default-content-wrapper:has(h5) + .table-wrapper{
+    .default-content-wrapper:has(h5) + .sbw-table-wrapper{
         margin-top: 8px;
     }
 
@@ -22,21 +22,21 @@
     }
 
     /* テーブル上のテキスト */
-    &.table-top-text-right{
+    &.sbw-table-top-text-right{
         .default-content-wrapper:has(p){
             p{
                 text-align: right;
             }
         }
     }
-    &.table-top-text-center{
+    &.sbw-table-top-text-center{
         .default-content-wrapper:has(p){
             p{
                 text-align: center;
             }
         }
     }
-    &.table-top-text-left{
+    &.sbw-table-top-text-left{
         .default-content-wrapper:has(p){
             p{
                 text-align: left;
@@ -44,11 +44,11 @@
         }
     }
 
-    &.table-top-text-right,
-    &.table-top-text-center,
-    &.table-top-text-left{
+    &.sbw-table-top-text-right,
+    &.sbw-table-top-text-center,
+    &.sbw-table-top-text-left{
         .default-content-wrapper:has(p){
-            + .table-wrapper{
+            + .sbw-table-wrapper{
                 margin-top: 8px;
             }
 
@@ -61,7 +61,7 @@
     }
 }
 
-.table{
+.sbw-table{
     table {
         width: 100%;
         overflow-x: auto;
