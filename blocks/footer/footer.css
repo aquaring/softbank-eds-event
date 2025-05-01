@@ -72,6 +72,10 @@ footer{
                     @media (width <= 768px) {
                         font-size: 12px;
                     }
+
+                    &:hover{
+                        text-decoration: underline;
+                    }
                 }
             }
         }
