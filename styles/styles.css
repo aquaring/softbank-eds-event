@@ -12,12 +12,12 @@
   /* colors text */
   --text-black: #323232;
   --text-black-dark: #000;
-  --text-blue: #007BFF;
+  --text-blue: #2979FF;
   --text-white: #FFF;
   --text-gray: #787878;
 
   /* colors link */
-  --link-blue: #007BFF;
+  --link-blue: #2979FF;
 
   /* colors border */
   --border-gray: #C1C6CC;
@@ -27,7 +27,7 @@
   --border-black-03: #555;
 
   /* colors button */
-  --button-black: #1C1C1C;
+  --button-black: #010E1C;
 
   /* fonts */
   --body-font-family: "Noto Sans JP", "Hiragino Kaku Gothic ProN", "Hiragino Sans", system-ui, sans-serif;
