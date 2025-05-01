@@ -92,5 +92,8 @@ section.sbw-section-bg-img.sbw-section-message{
             line-height: 180%;
             margin: 0;
         }
+        .sbw-message-text p + p{
+            margin-top: 1em;
+        }
     }
 }
