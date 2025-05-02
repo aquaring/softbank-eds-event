@@ -549,4 +549,8 @@ section.sbw-section-bg-img{
             margin-inline: auto;
         }
     }
+    /* 背景色 */
+    &.bg-gray01{
+        background-color: var(--background-gray-01);
+    }
 }
