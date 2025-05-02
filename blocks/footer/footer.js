@@ -3,16 +3,6 @@ import { loadFragment } from '../fragment/fragment.js';
 // import { buildBreadcrumbs } from '../../scripts/scripts.js';
 
 /**
- * フッターのフラグメントを読み込む
- * @param {string} path フラグメントのパス
- * @returns {Promise<HTMLElement|null>} フラグメント要素
- */
-const loadFooterFragment = async (path) => {
-  const fragment = await loadFragment(path);
-  return fragment;
-};
-
-/**
  * フッターグローバルのDOMを作成する
  * @returns {HTMLElement} フッターグローバル要素
  */
