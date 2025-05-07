@@ -1,65 +1,92 @@
-export default function decorate() {
-  document.querySelectorAll(".sbw-news > div").forEach((newsItem) => {
-    // news--innerクラスを追加
-    newsItem.classList.add("sbw-news-inner");
-
-    const linkElement = newsItem.querySelector("a");
-    if (linkElement) {
-      const url = linkElement.getAttribute("href");
-      const titleText = linkElement.getAttribute("title");
-      // .button-containerを削除
-      const buttonContainers = newsItem.querySelectorAll(".button-container");
-      buttonContainers.forEach((buttonContainer) => {
-        buttonContainer.remove();
-      });
-      // リンク要素内のボタンコンテナも削除
-      const linkButtonContainers = linkElement.querySelectorAll(".button-container");
-      linkButtonContainers.forEach((buttonContainer) => {
-        buttonContainer.remove();
-      });
-
-      // 新しい<a>タグを作成し、news-item-linkをラップ
-      const wrapper = document.createElement("a");
-      wrapper.href = url;
-      wrapper.className = "sbw-news-item-link";
-      wrapper.title = titleText;
-
-      // titleの文言を<p>タグで追加
-      if (titleText) {
-        const titleParagraph = document.createElement("p");
-        titleParagraph.className = "sbw-news-title";
-        titleParagraph.textContent = titleText;
-        newsItem.appendChild(titleParagraph);
-      }
-
-      // 元の<a>タグを削除
-      linkElement.remove();
-
-      // newsItemを<a>の中に移動
-      newsItem.replaceWith(wrapper);
-      wrapper.appendChild(newsItem);
-    }
-  });
-
-  // スクロールバーが表示されている場合のみpadding-rightを追加
-  const newsBlocks = document.querySelectorAll('.sbw-news.scroll.block');
-  newsBlocks.forEach((newsBlock) => {
-    // ResizeObserverを使用して要素のサイズ変更を監視
-    const resizeObserver = new ResizeObserver((entries) => {
-      for (const entry of entries) {
-        const { target } = entry;
-        // スクロールバーが表示されているかチェック
-        if (target.scrollHeight > target.clientHeight) {
-          // スクロールバーが表示されている場合、padding-rightを追加
-          target.style.paddingRight = '8px';
-        } else {
-          // スクロールバーが表示されていない場合、padding-rightを削除
-          target.style.paddingRight = '0';
+export default function decorate(block) {
+  // コンテナ要素をulに変更
+  const ul = document.createElement('ul');
+  ul.className = 'sbw-news-list';
+  
+  // ヘルパー関数: pタグの中のpタグを処理する
+  function processNestedPTags(parent, targetElement) {
+    while (parent.firstChild) {
+      const child = parent.firstChild;
+      
+      if (child.nodeName === 'DIV' || child.nodeName === 'P') {
+        // divやpタグの内容だけを追加
+        while (child.firstChild) {
+          // 子要素がpタグの場合、その内容を直接追加
+          if (child.firstChild.nodeName === 'P') {
+            const nestedP = child.firstChild;
+            while (nestedP.firstChild) {
+              targetElement.appendChild(nestedP.firstChild);
+            }
+            nestedP.remove();
+          } else {
+            targetElement.appendChild(child.firstChild);
+          }
         }
+        child.remove();
+      } else {
+        targetElement.appendChild(child);
       }
-    });
-
-    // 監視開始
-    resizeObserver.observe(newsBlock);
+    }
+  }
+  
+  // ヘルパー関数: datetime属性の設定
+  function setDatetime(timeElement, dateText) {
+    const dateNumbers = dateText.match(/\d+/g);
+    if (dateNumbers && dateNumbers.length >= 3) {
+      const year = dateNumbers[0];
+      const month = dateNumbers[1].padStart(2, '0');
+      const day = dateNumbers[2].padStart(2, '0');
+      timeElement.setAttribute('datetime', `${year}-${month}-${day}`);
+    }
+  }
+  
+  // 各ニュース項目を処理
+  [...block.children].forEach((row) => {
+    const li = document.createElement('li');
+    li.className = 'sbw-news-item';
+    
+    const article = document.createElement('article');
+    article.className = 'sbw-news-inner';
+    
+    const pElement = document.createElement('p');
+    pElement.className = 'sbw-news-text';
+    
+    // 最初のdivを日付として処理
+    const firstDiv = row.querySelector(':scope > div:first-child');
+    if (firstDiv) {
+      const timeElement = document.createElement('time');
+      
+      // 日付テキストを取得
+      let dateText = '';
+      const pTag = firstDiv.querySelector('p');
+      if (pTag) {
+        dateText = pTag.textContent;
+        timeElement.textContent = dateText;
+      } else {
+        dateText = firstDiv.textContent.trim();
+        timeElement.innerHTML = firstDiv.innerHTML;
+      }
+      
+      // datetime属性の設定
+      setDatetime(timeElement, dateText);
+      
+      // timeタグをpタグに追加
+      pElement.appendChild(timeElement);
+      
+      // 最初のdivを削除
+      firstDiv.remove();
+    }
+    
+    // 残りの要素をpタグに処理して追加
+    processNestedPTags(row, pElement);
+    
+    // 要素を組み立て
+    article.appendChild(pElement);
+    li.appendChild(article);
+    ul.appendChild(li);
   });
+  
+  // 元のブロックを置き換え
+  block.innerHTML = '';
+  block.appendChild(ul);
 };

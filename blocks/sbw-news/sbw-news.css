@@ -8,6 +8,7 @@ section.sbw-section-bg-img.sbw-section-news{
         @media (width <= 768px) {
             flex-direction: column;
             gap: 40px;
+            padding: 40px 24px;
         }
 
         hgroup{
@@ -30,46 +31,51 @@ section.sbw-section-bg-img.sbw-section-news{
 
 
 /* sbw-news */
-.sbw-news.block {
-    margin-top: 24px;
+.sbw-news-item {
+    padding-block: 16px;
+    border-bottom: 1px solid var(--border-gray);
 }
-.sbw-news.scroll.block {
-    max-height: 300px;
-    overflow: auto;
+.sbw-news-item:first-child {
+    padding-top: 0;
 }
-.sbw-news .sbw-news-inner {
-    display: flex;
-    gap: 24px;
-}
-.sbw-news .sbw-news-inner p {
+.sbw-news-text {
+    position: relative;
     font-size: 16px;
+    font-weight: 400;
     line-height: 1.5;
-    transition: text-decoration 0.2s ease-in;
-    text-decoration: underline transparent;
+    color: var(--text-black);
+    padding-left: 107px;
 }
-.sbw-news .sbw-news-title {
-    flex: 1;
+.sbw-news-text time {
+    position: absolute;
+    left: 0;
+    top: 0;
+    letter-spacing: 0.02em;
 }
-.sbw-news a.sbw-news-item-link {
-    display: block;
-    color: #323232;
-    padding-block: 12px;
-    border-bottom: 1px solid #C1C6CC;
-    transition: color 0.3s ease-out;
+.sbw-news-text a {
+    color: var(--link-blue-dark);
+    text-decoration: underline;
+    text-decoration-color: var(--link-blue-dark);
+    transition: text-decoration-color 0.2s ease-in;
+    text-underline-position: from-font;
 }
-.sbw-news .sbw-news-item-link:hover {
-    color: #787878;
-}
-.sbw-news .sbw-news-item-link:hover .sbw-news-title {
-    text-decoration-color: initial;
+
+/* PCのみ */
+@media (hover: hover) {
+    .sbw-news-text a:hover {
+        text-decoration-color: transparent;
+    }
 }
 
 @media (width <= 768px) {
-    .sbw-news.block {
-        padding-block: 8px;
+    .sbw-news-text {
+        padding-left: 0;
     }
-    .sbw-news .sbw-news-inner {
-        flex-direction: column;
-        gap: 4px;
+    .sbw-news-text time {
+        position: relative;
+        top: auto;
+        left: auto;
+        display: block;
+        margin-bottom: 4px;
     }
-  }
+}
