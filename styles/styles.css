@@ -18,6 +18,7 @@
 
   /* colors link */
   --link-blue: #2979FF;
+  --link-blue-dark: #007BFF;
 
   /* colors border */
   --border-gray: #C1C6CC;
@@ -548,5 +549,9 @@ section.sbw-section-bg-img{
             max-width: 800px;
             margin-inline: auto;
         }
+    }
+    /* 背景色 */
+    &.bg-gray01{
+        background-color: var(--background-gray-01);
     }
 }
