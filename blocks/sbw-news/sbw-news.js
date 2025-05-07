@@ -3,7 +3,7 @@ export default function decorate(block) {
   const ul = document.createElement('ul');
   ul.className = 'sbw-news-list';
   
-  // ヘルパー関数: pタグの中のpタグを処理する
+  // pタグの中のpタグを処理する
   function processNestedPTags(parent, targetElement) {
     while (parent.firstChild) {
       const child = parent.firstChild;
@@ -29,7 +29,7 @@ export default function decorate(block) {
     }
   }
   
-  // ヘルパー関数: datetime属性の設定
+  // datetime属性の設定
   function setDatetime(timeElement, dateText) {
     const dateNumbers = dateText.match(/\d+/g);
     if (dateNumbers && dateNumbers.length >= 3) {
