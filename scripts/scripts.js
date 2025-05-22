@@ -175,6 +175,53 @@ function processBgImgSections(main) {
 }
 
 /**
+ * sbw-subpage-titleセクション
+ * @param {Element} main メイン要素
+ */
+function processSubpageTitleSections(main) {
+  const subpageTitleSections = [...main.querySelectorAll('section.sbw-subpage-title')];
+  
+  subpageTitleSections.forEach((section) => {
+    try {
+      // データ属性から値を取得
+      const title = section.dataset.title;
+      const subtitle = section.dataset.subtitle;
+      const text = section.dataset.text;
+      
+      // hgroup要素の作成
+      const hgroup = document.createElement('hgroup');
+      
+      if (title) {
+        const h1 = document.createElement('h1');
+        h1.className = 'sbw-subpage-title-title';
+        h1.textContent = title;
+        hgroup.appendChild(h1);
+      }
+      
+      if (subtitle) {
+        const p = document.createElement('p');
+        p.className = 'sbw-subpage-title-subtitle';
+        p.textContent = subtitle;
+        hgroup.appendChild(p);
+      }
+
+      // 先にhgroupを追加
+      section.appendChild(hgroup);
+      
+      // その後で説明テキストを追加
+      if (text) {
+        const textP = document.createElement('p');
+        textP.className = 'sbw-subpage-title-text';
+        textP.textContent = text;
+        section.appendChild(textP);
+      }
+    } catch (e) {
+      console.error('Subpage title section processing error:', e);
+    }
+  });
+}
+
+/**
  * divタグをsectionタグに変換する
  * セクションのロードが完了した後にだけ実行すること
  * @param {Element} main メイン要素
@@ -329,6 +376,8 @@ async function loadPage() {
     replaceDivsWithSections(main);
     // sbw-section-bg-imgクラスを持つセクションを処理
     processBgImgSections(main);
+    // sbw-subpage-titleクラスを持つセクションを処理
+    processSubpageTitleSections(main);
   }
   
   loadDelayed();
