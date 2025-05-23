@@ -45,7 +45,7 @@
   flex-direction: row-reverse;
   gap: 64px;
   height: 100%;
-  padding: 40px 64px 32px;
+  padding: 40px 40px 32px;
 }
 
 .sbw-card-session-item-image {
@@ -143,15 +143,17 @@
   width: 270px;
 }
 
-.sbw-card-session-item-readmore-arrow {
+.sbw-card-session-item-readmore-icon {
   width: fit-content !important;
+  position: relative;
+  top: 2px;
 }
-.sbw-card-session-item-readmore-arrow::after {
+.sbw-card-session-item-readmore-icon::after {
   content: '';
   display: block;
   width: 1em;
   height: 1em;
-  background: url("../../icons/arrow-white.svg") no-repeat center / contain !important;
+  background: url("../../icons/icon-plus.svg") no-repeat center / contain !important;
   margin: 0 !important;
 }
 
@@ -188,9 +190,10 @@
     display: flex;
     align-items: center;
     width: fit-content;
+    position: static;
   }
   
-  .sbw-card-session-item-readmore-arrow::after {
+  .sbw-card-session-item-readmore-icon::after {
     position: absolute;
     top: 0;
     bottom: 0;

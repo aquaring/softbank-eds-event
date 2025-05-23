@@ -9,7 +9,6 @@ export default function decorate(block) {
   const itemInnerClass = `${itemClass}-inner`;
   const itemImageClass = `${itemClass}-image`;
   const itemContentClass = `${itemClass}-content`;
-  const itemTimeClass = `${itemClass}-time`;
   const itemTitleClass = `${itemClass}-title`;
   const itemDetailsClass = `${itemClass}-details`;
   const itemDatetimeClass = `${itemClass}-datetime`;
@@ -59,21 +58,7 @@ export default function decorate(block) {
     if (headerSection) {
       console.log('HeaderSection structure:', headerSection.innerHTML); // デバッグ用
       
-      // pタグを探してタグとして処理（最初に処理）
-      const pTags = headerSection.querySelectorAll('p');
-      if (pTags.length > 0) {
-        pTags.forEach(pTag => {
-          // timeタグを含むpは除外（別途処理）
-          if (!pTag.querySelector('time')) {
-            const tagElement = document.createElement('time');
-            tagElement.className = itemTimeClass;
-            tagElement.textContent = pTag.textContent.trim();
-            contentContainer.appendChild(tagElement);
-          }
-        });
-      }
-      
-      // h3タグを探してタイトルとして処理（2番目に処理）
+      // h3タグを探してタイトルとして処理
       const h3Tag = headerSection.querySelector('h3');
       if (h3Tag) {
         const titleElement = document.createElement('h3');
@@ -92,7 +77,7 @@ export default function decorate(block) {
       }
       
       // 子要素が一つもなかった場合は、テキスト全体をタイトルとして扱う
-      if (!h3Tag && pTags.length === 0 && !timeTag) {
+      if (!h3Tag && !timeTag) {
         const titleElement = document.createElement('h3');
         titleElement.className = itemTitleClass;
         titleElement.textContent = headerSection.textContent.trim();
@@ -157,11 +142,11 @@ export default function decorate(block) {
     const readMoreText = document.createElement('span');
     readMoreText.textContent = 'Read more';
     
-    const readMoreArrow = document.createElement('span');
-    readMoreArrow.className = `${readMoreClass}-arrow`;
+    const readMoreIcon = document.createElement('span');
+    readMoreIcon.className = `${readMoreClass}-icon`;
     
     readMoreElement.appendChild(readMoreText);
-    readMoreElement.appendChild(readMoreArrow);
+    readMoreElement.appendChild(readMoreIcon);
     
     // Read moreをカードの最後に追加（内部コンテナの外）
     card.appendChild(readMoreElement);
