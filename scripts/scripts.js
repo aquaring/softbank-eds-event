@@ -222,6 +222,38 @@ function processSubpageTitleSections(main) {
 }
 
 /**
+ * sbw-subpage-sectionセクション
+ * @param {Element} main メイン要素
+ */
+function processSubpageSections(main) {
+  main.querySelectorAll('section.sbw-subpage-section').forEach((section) => {
+    const title = section.dataset.title;
+    if (!title) return;
+
+    try {
+      // ラッパーとh2要素を作成
+      const wrapper = document.createElement('div');
+      wrapper.className = 'sbw-subpage-section-wrapper';
+      
+      const h2 = document.createElement('h2');
+      Object.assign(h2, {
+        className: 'sbw-subpage-section-title',
+        textContent: title,
+        id: title
+      });
+
+      // 既存の子要素をラッパーに移動
+      wrapper.append(h2, ...section.children);
+      
+      // セクションにラッパーを設定
+      section.replaceChildren(wrapper);
+    } catch (e) {
+      console.error('Subpage section processing error:', e);
+    }
+  });
+}
+
+/**
  * divタグをsectionタグに変換する
  * セクションのロードが完了した後にだけ実行すること
  * @param {Element} main メイン要素
@@ -378,6 +410,8 @@ async function loadPage() {
     processBgImgSections(main);
     // sbw-subpage-titleクラスを持つセクションを処理
     processSubpageTitleSections(main);
+    // sbw-subpage-sectionクラスを持つセクションを処理
+    processSubpageSections(main);
   }
   
   loadDelayed();

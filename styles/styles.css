@@ -7,6 +7,7 @@
   --background-gray-01: #F0F2F4;
   --background-gray-02: #E1E1E6;
   --background-gray-03: #F4F8FA;
+  --background-gray-04: #ECECEC;
   --background-blue-hover: #D7ECF7;
   --background-purple-01: #B18AE6;
 
@@ -272,14 +273,6 @@ p sub {
 }
 
 /* sections */
-main{
-    /* padding-bottom: 80px; */
-    overflow-x: hidden;
-
-    /* @media (width <= 768px) {
-        padding-bottom: 40px;
-    } */
-}
 main:has(.section > .contact-multi-wrapper:last-child),
 main:has(.section > .contact-simple-wrapper:last-child),
 main:has(.bg-section-container:last-child) {
@@ -568,4 +561,39 @@ section.sbw-subpage-title{
         line-height: 150%; /* 24px */
         text-align: center;
     }
+}
+
+/* 下層ページセクション */
+main > .section.sbw-subpage-section{
+    max-width: none;
+    padding: 0;
+}
+
+.sbw-subpage-section-wrapper{
+    max-width: 1248px;
+    margin: 0 auto;
+    padding: 64px 24px;
+}
+
+.sbw-subpage-section-wrapper h2{
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    font-size: 28px;
+    font-weight: 500;
+    line-height: 150%;
+    margin-top: 0;
+    margin-bottom: 40px;
+}
+
+.sbw-subpage-section-wrapper h2::before{
+    content: '';
+    display: block;
+    width: 3px;
+    height: 56px;
+    background: linear-gradient(90deg, #A3B8FF 0%, #CD98FF 79.81%, #FF72FF 100%);
+}
+
+main > .section.sbw-subpage-section.bg-gray{
+    background: var(--background-gray-04);
 }

@@ -1,0 +1,35 @@
+.sbw-table-of-contents{
+    margin-top: 40px;
+}
+
+.sbw-table-of-contents ul{
+    display: flex;
+    justify-content: center;
+}
+
+.sbw-table-of-contents ul li{
+    margin-right: 32px;   
+}
+
+.sbw-table-of-contents ul li:last-child{
+    margin-right: 0;
+}
+
+.sbw-table-of-contents ul li a{
+    display: flex;
+    width: fit-content;
+    color: var(--text-black);
+    font-weight: 700;
+    gap: 16px;
+    padding-right: 24px;
+    border-right: 1px solid var(--border-gray);
+}
+
+.sbw-table-of-contents ul li a::after{
+    content: '';
+    display: block;
+    width: 14px;
+    height: 14px;
+    background: url("../../icons/icon-anchor.svg") no-repeat center / contain;
+    margin: 0 !important;
+}
