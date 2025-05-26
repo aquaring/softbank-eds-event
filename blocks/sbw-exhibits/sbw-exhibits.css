@@ -70,13 +70,13 @@
   margin-top: auto;
 }
 
-.sbw-exhibits-item-readmore-arrow {
+.sbw-exhibits-item-readmore-icon {
   &::after {
     content: '';
     display: block;
     width: 1em;
     height: 1em;
-    background: url("../../icons/arrow-white.svg") no-repeat center / contain !important;
+    background: url("../../icons/icon-plus.svg") no-repeat center / contain !important;
     margin: 0 !important;
     position: absolute;
     top: 50%;

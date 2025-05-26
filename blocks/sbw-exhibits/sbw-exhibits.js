@@ -70,10 +70,10 @@ export default function decorate(block) {
       readMoreElement.className = readMoreClass;
       const readMoreText = document.createElement('span');
       readMoreText.textContent = 'Read more';
-      const readMoreArrow = document.createElement('span');
-      readMoreArrow.className = `${readMoreClass}-arrow`;
+      const readMoreIcon = document.createElement('span');
+      readMoreIcon.className = `${readMoreClass}-icon`;
       readMoreElement.appendChild(readMoreText);
-      readMoreElement.appendChild(readMoreArrow);
+      readMoreElement.appendChild(readMoreIcon);
       
       // もとのリンクを削除
       if (innerLink.closest('div')) {
