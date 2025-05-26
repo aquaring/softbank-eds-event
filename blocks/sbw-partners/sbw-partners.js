@@ -139,20 +139,17 @@ export default function decorate(block) {
     });
   }
 
-  try {
-    removeDivsAroundP(block);
-    removePTagsAroundLinks(block);
-    
-    // h3タグにクラスを追加
-    block.querySelectorAll('h3').forEach((h3) => {
-      if (h3.parentElement === block) {
-        h3.classList.add('sbw-partners-title');
-      }
-    });
-    
-    convertDivsToLiWithClass(block);
-    wrapDivsWithLinks();
-    removeDivsInPartnerLinks();
-  } catch (e) {
-  }
+  removeDivsAroundP(block);
+  removePTagsAroundLinks(block);
+  
+  // h3タグにクラスを追加
+  block.querySelectorAll('h3').forEach((h3) => {
+    if (h3.parentElement === block) {
+      h3.classList.add('sbw-partners-title');
+    }
+  });
+  
+  convertDivsToLiWithClass(block);
+  wrapDivsWithLinks();
+  removeDivsInPartnerLinks();
 }
