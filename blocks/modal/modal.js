@@ -17,12 +17,19 @@ import {
  */
 export async function createModal(contentNodes) {
   await loadCSS(`${window.hlx.codeBasePath}/blocks/modal/modal.css`);
+
+  const closeButton = document.createElement('button');
+  closeButton.classList.add('close-button');
+  closeButton.setAttribute('aria-label', 'Close');
+  closeButton.type = 'button';
+  closeButton.innerHTML = '<span class="icon icon-close"></span>';
+  closeButton.addEventListener('click', () => dialog.close());
   
   // コンテンツの前処理
   const fragment = prepareModalContent(contentNodes);
   
   // ダイアログの作成と設定
-  const { dialog, dialogContent } = createDialogElement(fragment);
+  const dialog = createDialogElement(fragment, closeButton);
   
   // モーダルブロックの作成
   const block = buildBlock('modal', '');
@@ -75,17 +82,24 @@ function prepareModalContent(contentNodes) {
 /**
  * ダイアログ要素を作成する
  * @param {DocumentFragment} content ダイアログに表示するコンテンツ
- * @returns {Object} ダイアログ要素とそのコンテンツ要素を含むオブジェクト
+ * @param {HTMLElement} closeButton 閉じるボタン要素
+ * @returns {HTMLElement} ダイアログ要素
  */
-function createDialogElement(content) {
+function createDialogElement(content, closeButton) {
   const dialog = document.createElement('dialog');
   const dialogContent = document.createElement('div');
   
   dialogContent.classList.add('modal-content');
+  
+  // 閉じるボタンを最初に追加
+  dialogContent.append(closeButton);
+  
+  // その後にコンテンツを追加
   dialogContent.append(content);
+  
   dialog.append(dialogContent);
   
-  return { dialog, dialogContent };
+  return dialog;
 }
 
 /**

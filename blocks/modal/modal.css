@@ -19,7 +19,7 @@ body[style*="position: fixed"] {
 
 .modal dialog {
   overscroll-behavior: none;
-  overflow-y: hidden;
+  overflow-y: auto;
   width: calc(100vw - (40px * 2));
   max-width: 1200px;
   max-height: calc(100dvh - (2 * var(--header-height)));
@@ -36,43 +36,34 @@ body[style*="position: fixed"] {
 
 .modal dialog .modal-content {
   box-sizing: border-box;
-  overflow-y: auto;
   overscroll-behavior: none;
   width: 100%;
-  max-height: 100vh;
   text-align: center;
   padding: 40px 64px;
+  position: relative;
 
   @media (width <= 768px) {
     padding: 40px 16px;
   }
 }
 
-/* モーダルの閉じるボタン:DOMだとdialogの外に出せないので疑似要素で実装 */
-.modal dialog::before {
-  content: '';
-  display: block;
-  width: 24px;
-  height: 24px;
-  background: url("../../icons/icon-close.svg") no-repeat center / contain !important;
-  margin: 0 !important;
-  position: fixed;
-  /* top: calc((100dvh - (2 * var(--header-height)) - 48px) / 2 - 90px); */
-  top: calc(50% - 200px);
+.modal dialog .close-button{
+  width: 20px;
+  height: 20px;
+  background: none;
+  padding: 0;
+  gap: 0;
+  position: absolute;
+  top: 40px;
   right: 40px;
-  cursor: pointer;
-  z-index: 2000;
+}
 
-  @media (width >= 1240px) {
-    right: calc((100vw - 1200px) / 2);
-  }
-
-  @media (width <= 768px) {
-    width: 20px;
-    height: 20px;
-    right: 24px;
-    top: calc(50% - 220px);
-  }
+.modal dialog .close-button::after{
+  width: 20px;
+  height: 20px;
+  background: url("../../icons/icon-close.svg") no-repeat center / contain !important;
+  position: static;
+  transform: none;
 }
 
 /* モーダルの中身 */
@@ -127,4 +118,13 @@ body[style*="position: fixed"] {
   @media (width > 769px) {
     display: none;
   }
+}
+
+/* セッションモーダル */
+.modal.sbw-featured-session-modal{
+  text-align: left;
+}
+
+.modal.sbw-featured-session-modal .default-content-wrapper > *:first-child{
+  margin-top: 0;
 }
