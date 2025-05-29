@@ -6,12 +6,20 @@
   background: var(--background-gray-01);
   padding: 24px 40px;
   margin-top: 32px;
+
+  @media (width <= 768px) {
+    padding: 24px 16px;
+  }
 }
 
 .sbw-featured-session-modal-person-item{
   display: flex;
   width: 100%;
   gap: 40px;
+
+  @media (width <= 768px) {
+    gap: 16px;
+  }
 }
 
 .sbw-featured-session-modal-person-image{

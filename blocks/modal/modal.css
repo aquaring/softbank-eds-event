@@ -43,7 +43,7 @@ body[style*="position: fixed"] {
   position: relative;
 
   @media (width <= 768px) {
-    padding: 40px 16px;
+    padding: 64px 16px 40px;
   }
 }
 
@@ -56,6 +56,11 @@ body[style*="position: fixed"] {
   position: absolute;
   top: 40px;
   right: 40px;
+
+  @media (width <= 768px) {
+    top: 20px;
+    right: 16px;
+  }
 }
 
 .modal dialog .close-button::after{
