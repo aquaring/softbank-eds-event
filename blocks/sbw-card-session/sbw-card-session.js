@@ -9,10 +9,10 @@ export default function decorate(block) {
   const itemInnerClass = `${itemClass}-inner`;
   const itemImageClass = `${itemClass}-image`;
   const itemContentClass = `${itemClass}-content`;
+  const itemTagClass = `${itemClass}-tag`;
   const itemTitleClass = `${itemClass}-title`;
   const itemDetailsClass = `${itemClass}-details`;
   const itemDatetimeClass = `${itemClass}-datetime`;
-  const itemNoteClass = `${itemClass}-note`;
   const readMoreClass = `${itemClass}-readmore`;
 
   // 画像サイズの出しわけ設定
@@ -58,7 +58,16 @@ export default function decorate(block) {
     if (headerSection) {
       console.log('HeaderSection structure:', headerSection.innerHTML); // デバッグ用
       
-      // h3タグを探してタイトルとして処理
+      // pタグを探してタグとして処理（最初に処理）
+      const pTags = headerSection.querySelectorAll('p');
+      if (pTags.length > 0) {
+        pTags.forEach(pTag => {
+          pTag.className = itemTagClass;
+          contentContainer.appendChild(pTag);
+        });
+      }
+      
+      // h3タグを探してタイトルとして処理（2番目に処理）
       const h3Tag = headerSection.querySelector('h3');
       if (h3Tag) {
         const titleElement = document.createElement('h3');

@@ -73,7 +73,7 @@
   flex: 1;
 }
 
-.sbw-card-session-item-time {
+.sbw-card-session-item-tag {
   display: inline-block;
   text-align: center;
   font-size: 18px;
@@ -81,7 +81,6 @@
   line-height: 1.25;
   padding: 4px 40px;
   border-radius: 100px;
-  margin-bottom: 16px;
   width: fit-content;
   background-color: var(--background-purple-01);
   color: var(--background-color);
@@ -92,6 +91,10 @@
   font-weight: 700;
   color: var(--text-black);
   margin: 0 0 24px 0;
+}
+
+.sbw-card-session-item-tag + .sbw-card-session-item-title {
+  margin-top: 16px;
 }
 
 .sbw-card-session-item-details {

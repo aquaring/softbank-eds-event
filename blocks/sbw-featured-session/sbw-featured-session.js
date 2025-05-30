@@ -1,10 +1,37 @@
 export default function decorate(block) {
+  // 各要素のクラス名を定義
+  const baseClass = 'sbw-featured-session';
+  const contentWrapperClass = `${baseClass}-content-wrapper`;
+  const tagClass = `${baseClass}-tag`;
+  const innerClass = `${baseClass}-inner`;
+  const contentClass = `${baseClass}-content`;
+  const imageClass = `${baseClass}-image`;
+  const textClass = `${baseClass}-text`;
+  const positionClass = `${baseClass}-position`;
+  const nameClass = `${baseClass}-name`;
+  const readMoreClass = `${baseClass}-readmore`;
+
   // 基本構造を作成
   const contentWrapper = document.createElement('div');
-  contentWrapper.className = 'sbw-featured-session-content-wrapper';
+  contentWrapper.className = contentWrapperClass;
 
-  // タイトル（h3要素）を取得
+  // タイトル（h3要素）とタグ（h3の前のp要素）を取得
   const title = block.querySelector('h3');
+  
+  // h3の前のp要素を取得してタグとして処理
+  const tagElements = [];
+  if (title && title.parentElement) {
+    const headerSection = title.parentElement;
+    
+    // pタグを探してタグとして処理
+    const pTags = headerSection.querySelectorAll('p');
+    if (pTags.length > 0) {
+      pTags.forEach(pTag => {
+        pTag.className = tagClass;
+        tagElements.push(pTag);
+      });
+    }
+  }
   
   // データの構造を分析
   const inputDivs = Array.from(block.children).filter(child => child.tagName === 'DIV');
@@ -34,26 +61,26 @@ export default function decorate(block) {
   // 人物データから正確に4つのコンテンツ要素を作成
   peopleData.slice(0, 4).forEach(person => {
     const contentDiv = document.createElement('div');
-    contentDiv.className = 'sbw-featured-session-content';
+    contentDiv.className = contentClass;
     
     // 画像部分
     if (person.picture) {
       const imageDiv = document.createElement('div');
-      imageDiv.className = 'sbw-featured-session-image';
+      imageDiv.className = imageClass;
       imageDiv.appendChild(person.picture.cloneNode(true));
       contentDiv.appendChild(imageDiv);
     }
     
     // テキスト部分
     const textDiv = document.createElement('div');
-    textDiv.className = 'sbw-featured-session-text';
+    textDiv.className = textClass;
     
     const positionP = document.createElement('p');
-    positionP.className = 'sbw-featured-session-position';
+    positionP.className = positionClass;
     positionP.textContent = person.position;
     
     const nameP = document.createElement('p');
-    nameP.className = 'sbw-featured-session-name';
+    nameP.className = nameClass;
     nameP.textContent = person.name;
     
     textDiv.appendChild(positionP);
@@ -74,7 +101,14 @@ export default function decorate(block) {
   
   // innerコンテナを作成
   const inner = document.createElement('div');
-  inner.className = 'sbw-featured-session-inner';
+  inner.className = innerClass;
+  
+  // タグを先に追加（h3の前）
+  if (tagElements.length > 0) {
+    tagElements.forEach(tagElement => {
+      inner.appendChild(tagElement);
+    });
+  }
   
   if (title) {
     inner.appendChild(title);
@@ -85,7 +119,7 @@ export default function decorate(block) {
   
   // Read moreボタンを追加
   const readMore = document.createElement('div');
-  readMore.className = 'sbw-featured-session-readmore';
+  readMore.className = readMoreClass;
   readMore.innerHTML = '<span>Read more</span>';
   link.appendChild(readMore);
   

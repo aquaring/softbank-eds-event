@@ -24,6 +24,23 @@
   }
 }
 
+.sbw-featured-session-tag{
+  display: inline-block;
+  text-align: center;
+  font-size: 18px;
+  font-weight: 500;
+  line-height: 1.25;
+  padding: 4px 24px;
+  border-radius: 100px;
+  width: fit-content;
+  background-color: var(--background-purple-01);
+  color: var(--background-color);
+}
+
+.sbw-featured-session-inner .sbw-featured-session-tag + h3{
+  margin-top: 16px;
+}
+
 .sbw-featured-session-inner h3{
   font-size: 24px;
   margin-top: 0;
