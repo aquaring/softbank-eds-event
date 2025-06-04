@@ -549,6 +549,9 @@ section.sbw-section-bg-img{
     &.bg-gray01{
         background-color: var(--background-gray-01);
     }
+    &.bg-black01{
+        background: linear-gradient(0deg, #242626 0%, #242626 100%);
+    }
     
 }
 
