@@ -93,4 +93,7 @@
     .sbw-partners-list {
         gap: 8px;
     }
+    .sbw-partners.platinum .sbw-partners-list:has(.sbw-partners-link:nth-child(4):last-child) .sbw-partners-link {
+        flex: auto;
+    }
 }
