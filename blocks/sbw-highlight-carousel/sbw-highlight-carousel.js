@@ -13,22 +13,18 @@ function updateActiveSlide(slide) {
   const block = slide.closest('.sbw-highlight-carousel');
   if (!block) return;
   
-  // ダミースライドの場合は処理しない
-  if (slide.classList.contains('dummy-slide')) return;
+  // クローンスライドの場合は処理しない
+  if (slide.classList.contains('clone-slide')) return;
   
   const slideIndex = parseInt(slide.dataset.slideIndex, 10);
   block.dataset.activeSlide = slideIndex;
 
-  const slides = block.querySelectorAll('.sbw-highlight-carousel-slide:not(.dummy-slide)');
+  const slides = block.querySelectorAll('.sbw-highlight-carousel-slide:not(.clone-slide)');
 
   slides.forEach((aSlide, idx) => {
     aSlide.setAttribute('aria-hidden', idx !== slideIndex);
     if (idx === slideIndex) {
       aSlide.classList.add('active');
-      // 必要に応じてアニメーションのリセット
-      aSlide.style.animation = 'none';
-      aSlide.offsetHeight; // リフロー強制
-      aSlide.style.animation = null;
     } else {
       aSlide.classList.remove('active');
     }
@@ -52,67 +48,374 @@ function updateActiveSlide(slide) {
   });
 }
 
-// ダミースライドが含まれるカルーセルを初期化
-function initializeCarouselWithClones(block) {
+// 真の無限スクロールカルーセル初期化
+function initializeCircularCarousel(block) {
   const slidesWrapper = block.querySelector('.sbw-highlight-carousel-slides');
-  const slides = Array.from(block.querySelectorAll('.sbw-highlight-carousel-slide:not(.dummy-slide)'));
-  const allSlides = block.querySelectorAll('.sbw-highlight-carousel-slide');
-  const totalRealSlides = slides.length;
+  const slides = Array.from(block.querySelectorAll('.sbw-highlight-carousel-slide'));
   
   if (!slides.length || !slidesWrapper) return;
   
-  // パフォーマンスのため、scrollLeftの設定前にスムーズスクロールを無効化
-  slidesWrapper.style.scrollBehavior = 'auto';
-  
-  // スライドの幅を取得（マージンを含む）
-  const slideWidth = slides[0].offsetWidth;
-  const slideStyle = window.getComputedStyle(slides[0]);
-  const slideMarginLeft = parseInt(slideStyle.marginLeft || '0', 10);
-  const slideMarginRight = parseInt(slideStyle.marginRight || '0', 10);
-  const slideFullWidth = slideWidth + slideMarginLeft + slideMarginRight;
-  
-  // 初期位置を設定（最初のスライドを表示）
-  const realFirstSlide = slides[0];
-  const realFirstSlideCenter = realFirstSlide.offsetLeft + (realFirstSlide.offsetWidth / 2);
-  const containerCenter = slidesWrapper.offsetWidth / 2;
-  slidesWrapper.scrollLeft = realFirstSlideCenter - containerCenter;
+  // 真の無限スクロール用の初期クローンスライドを作成
+  createInitialInfiniteSlides(block);
   
   // 初期状態のアクティブスライド設定
   block.dataset.activeSlide = 0;
-  slides[0].classList.add('active');
-  slides[0].style.opacity = '1';
-  slides[0].style.zIndex = '1';
   
-  // スムーズスクロールを有効に戻す（遅延して適用することでちらつきを防止）
+  // すべてのスライドからactiveクラスを削除してから最初のスライドをアクティブに
+  slides.forEach((slide, idx) => {
+    if (idx === 0) {
+      slide.classList.add('active');
+    } else {
+      slide.classList.remove('active');
+    }
+  });
+  
+  // 初期位置を中央のオリジナルスライドに設定
   setTimeout(() => {
-    slidesWrapper.style.scrollBehavior = 'smooth';
-  }, 50);
+    positionToOriginalSlide(block, 0, true);
+    // 初期フィルター効果を適用
+    setTimeout(() => {
+      updateVisibilityAndFilters(block);
+    }, 200);
+  }, 100);
+  
+  // 無限スクロール監視を開始
+  addInfiniteScrollWatcher(block);
+}
+
+// 初期の無限スライド作成
+function createInitialInfiniteSlides(block) {
+  const slidesWrapper = block.querySelector('.sbw-highlight-carousel-slides');
+  const originalSlides = Array.from(block.querySelectorAll('.sbw-highlight-carousel-slide:not(.clone-slide)'));
+  
+  if (originalSlides.length < 2) return;
+  
+  // 既存のクローンスライドを削除
+  block.querySelectorAll('.clone-slide').forEach(slide => slide.remove());
+  
+  // 左側に3セット分のクローンスライドを追加
+  for (let set = 0; set < 3; set++) {
+    for (let i = originalSlides.length - 1; i >= 0; i--) {
+      const leftClone = createCloneSlide(originalSlides[i], 'left', set, i);
+      slidesWrapper.insertBefore(leftClone, slidesWrapper.firstChild);
+    }
+  }
+  
+  // 右側に3セット分のクローンスライドを追加
+  for (let set = 0; set < 3; set++) {
+    for (let i = 0; i < originalSlides.length; i++) {
+      const rightClone = createCloneSlide(originalSlides[i], 'right', set, i);
+      slidesWrapper.appendChild(rightClone);
+    }
+  }
+}
+
+// クローンスライドを作成する関数
+function createCloneSlide(originalSlide, direction, setIndex, slideIndex) {
+  const clone = originalSlide.cloneNode(true);
+  clone.classList.add('clone-slide', `clone-${direction}`);
+  clone.classList.remove('active');
+  clone.dataset.slideIndex = `clone-${direction}-${setIndex}-${slideIndex}`;
+  clone.dataset.originalIndex = slideIndex;
+  clone.dataset.setIndex = setIndex;
+  clone.setAttribute('aria-hidden', 'true');
+  clone.querySelectorAll('a').forEach(link => link.setAttribute('tabindex', '-1'));
+  return clone;
+}
+
+// 真の無限スクロール監視
+function addInfiniteScrollWatcher(block) {
+  const slidesWrapper = block.querySelector('.sbw-highlight-carousel-slides');
+  const originalSlides = Array.from(block.querySelectorAll('.sbw-highlight-carousel-slide:not(.clone-slide)'));
+  
+  if (!slidesWrapper || originalSlides.length < 2) return;
+  
+  let isGenerating = false;
+  let scrollTimeout;
+  
+  const handleScroll = () => {
+    if (isGenerating || isSlideTransitionLocked) return;
+    
+    clearTimeout(scrollTimeout);
+    scrollTimeout = setTimeout(() => {
+      checkAndGenerateSlides();
+      updateActiveSlideByPosition();
+    }, 50);
+  };
+  
+  const checkAndGenerateSlides = () => {
+    if (isGenerating) return;
+    
+    const scrollLeft = slidesWrapper.scrollLeft;
+    const containerWidth = slidesWrapper.offsetWidth;
+    const scrollWidth = slidesWrapper.scrollWidth;
+    
+    // 右側にスクロールしすぎた場合、右側にクローンスライドを追加
+    if (scrollLeft > scrollWidth - containerWidth * 2) {
+      isGenerating = true;
+      addMoreClones(block, 'right');
+      setTimeout(() => { isGenerating = false; }, 100);
+    }
+    
+    // 左側にスクロールしすぎた場合、左側にクローンスライドを追加
+    if (scrollLeft < containerWidth) {
+      isGenerating = true;
+      addMoreClones(block, 'left');
+      setTimeout(() => { isGenerating = false; }, 100);
+    }
+    
+    // パフォーマンス維持のため、遠くのクローンスライドを削除
+    removeDistantClones(block);
+  };
+  
+     // 位置ベースでアクティブスライドとフィルター効果を更新
+   const updateActiveSlideByPosition = () => {
+     if (isSlideTransitionLocked) return;
+     
+     // フィルター効果を更新
+     updateVisibilityAndFilters(block);
+     
+     // アクティブスライドを更新
+     const scrollLeft = slidesWrapper.scrollLeft;
+     const containerWidth = slidesWrapper.offsetWidth;
+     const containerCenter = scrollLeft + (containerWidth / 2);
+     
+     // すべてのスライド（オリジナル + クローン）を取得
+     const allSlides = Array.from(block.querySelectorAll('.sbw-highlight-carousel-slide'));
+     
+     // 現在の中央に最も近いスライドを見つける
+     let closestSlide = null;
+     let minDistance = Infinity;
+     
+     allSlides.forEach(slide => {
+       const slideCenter = slide.offsetLeft + (slide.offsetWidth / 2);
+       const distance = Math.abs(containerCenter - slideCenter);
+       
+       // 中央に最も近いスライドを見つける
+       if (distance < minDistance) {
+         minDistance = distance;
+         
+         if (!slide.classList.contains('clone-slide')) {
+           // オリジナルスライドの場合
+           const slideIndex = parseInt(slide.dataset.slideIndex, 10);
+           closestSlide = { slide, index: slideIndex };
+         } else {
+           // クローンスライドの場合
+           const originalIndex = parseInt(slide.dataset.originalIndex, 10);
+           closestSlide = { slide, index: originalIndex };
+         }
+       }
+     });
+     
+     // アクティブスライドのインデックスを更新
+     if (closestSlide && minDistance < 200) {
+       const currentActiveIndex = parseInt(block.dataset.activeSlide || '0', 10);
+       if (closestSlide.index !== currentActiveIndex) {
+         updateActiveSlideIndex(block, closestSlide.index);
+       }
+     }
+   };
+  
+  slidesWrapper.addEventListener('scroll', handleScroll, { passive: true });
+}
+
+// 追加のクローンスライドを生成
+function addMoreClones(block, direction) {
+  const slidesWrapper = block.querySelector('.sbw-highlight-carousel-slides');
+  const originalSlides = Array.from(block.querySelectorAll('.sbw-highlight-carousel-slide:not(.clone-slide)'));
+  
+  if (direction === 'right') {
+    // 右側に新しいセットを追加
+    const existingRightClones = block.querySelectorAll('.clone-right');
+    const maxSetIndex = Math.max(...Array.from(existingRightClones).map(clone => 
+      parseInt(clone.dataset.setIndex || '0', 10)
+    ));
+    const newSetIndex = maxSetIndex + 1;
+    
+    for (let i = 0; i < originalSlides.length; i++) {
+      const rightClone = createCloneSlide(originalSlides[i], 'right', newSetIndex, i);
+      slidesWrapper.appendChild(rightClone);
+    }
+  } else if (direction === 'left') {
+    // 左側に新しいセットを追加（スクロール位置を維持するため特別な処理）
+    const existingLeftClones = block.querySelectorAll('.clone-left');
+    const maxSetIndex = Math.max(...Array.from(existingLeftClones).map(clone => 
+      parseInt(clone.dataset.setIndex || '0', 10)
+    ));
+    const newSetIndex = maxSetIndex + 1;
+    
+    // 現在のスクロール位置を記録
+    const currentScrollLeft = slidesWrapper.scrollLeft;
+    
+    // 左側に新しいセットを追加
+    for (let i = originalSlides.length - 1; i >= 0; i--) {
+      const leftClone = createCloneSlide(originalSlides[i], 'left', newSetIndex, i);
+      slidesWrapper.insertBefore(leftClone, slidesWrapper.firstChild);
+    }
+    
+    // スクロール位置を調整（新しいスライドが追加された分だけ右にシフト）
+    const slideWidth = originalSlides[0].offsetWidth + 40; // スライド幅 + gap
+    const offsetWidth = originalSlides.length * slideWidth;
+    slidesWrapper.scrollLeft = currentScrollLeft + offsetWidth;
+  }
+}
+
+// 遠くのクローンスライドを削除（パフォーマンス最適化）
+function removeDistantClones(block) {
+  const slidesWrapper = block.querySelector('.sbw-highlight-carousel-slides');
+  const scrollLeft = slidesWrapper.scrollLeft;
+  const containerWidth = slidesWrapper.offsetWidth;
+  const viewportLeft = scrollLeft - containerWidth;
+  const viewportRight = scrollLeft + containerWidth * 2;
+  
+  // 画面から遠く離れたクローンスライドを削除
+  const allClones = block.querySelectorAll('.clone-slide');
+  allClones.forEach(clone => {
+    const cloneLeft = clone.offsetLeft;
+    const cloneRight = cloneLeft + clone.offsetWidth;
+    
+    // ビューポートから十分離れているかチェック
+    if (cloneRight < viewportLeft || cloneLeft > viewportRight) {
+      const setIndex = parseInt(clone.dataset.setIndex || '0', 10);
+      // 初期セット（0, 1, 2）は保持し、それ以降のセットのみ削除
+      if (setIndex > 2) {
+        clone.remove();
+      }
+    }
+  });
+}
+
+// オリジナルスライドに位置を設定する関数
+function positionToOriginalSlide(block, slideIndex, instant = false) {
+  const slidesWrapper = block.querySelector('.sbw-highlight-carousel-slides');
+  const originalSlides = Array.from(block.querySelectorAll('.sbw-highlight-carousel-slide:not(.clone-slide)'));
+  const targetSlide = originalSlides[slideIndex];
+  
+  if (!targetSlide || !slidesWrapper) return;
+  
+  const slideCenter = targetSlide.offsetLeft + (targetSlide.offsetWidth / 2);
+  const containerCenter = slidesWrapper.offsetWidth / 2;
+  const scrollPosition = slideCenter - containerCenter;
+  
+  if (instant) {
+          slidesWrapper.style.scrollBehavior = 'auto';
+    slidesWrapper.scrollLeft = scrollPosition;
+          requestAnimationFrame(() => {
+            slidesWrapper.style.scrollBehavior = 'smooth';
+    });
+  } else {
+    slidesWrapper.scrollTo({
+      left: scrollPosition,
+      behavior: 'smooth',
+    });
+  }
+  
+  // アクティブスライドを更新
+  updateActiveSlideIndex(block, slideIndex);
+  
+  // フィルター効果を更新
+  setTimeout(() => {
+    updateVisibilityAndFilters(block);
+  }, instant ? 50 : 200);
+}
+
+// スライドの表示状態とフィルター効果を更新する関数
+function updateVisibilityAndFilters(block) {
+  const slidesWrapper = block.querySelector('.sbw-highlight-carousel-slides');
+  if (!slidesWrapper) return;
+  
+  const scrollLeft = slidesWrapper.scrollLeft;
+  const containerWidth = slidesWrapper.offsetWidth;
+  const viewportLeft = scrollLeft;
+  const viewportRight = scrollLeft + containerWidth;
+  
+  // すべてのスライド（オリジナル + クローン）を取得
+  const allSlides = Array.from(block.querySelectorAll('.sbw-highlight-carousel-slide'));
+  
+  allSlides.forEach(slide => {
+    const slideLeft = slide.offsetLeft;
+    const slideRight = slideLeft + slide.offsetWidth;
+    
+    // スライドがビューポート内にどの程度表示されているかを計算
+    const visibleLeft = Math.max(slideLeft, viewportLeft);
+    const visibleRight = Math.min(slideRight, viewportRight);
+    const visibleWidth = Math.max(0, visibleRight - visibleLeft);
+    const visibilityRatio = visibleWidth / slide.offsetWidth;
+    
+    // 表示状態に応じてクラスを更新
+    if (visibilityRatio >= 0.8) {
+      // 80%以上表示されている場合はフィルターを除去
+      slide.classList.add('fully-visible');
+      slide.classList.remove('partially-visible');
+    } else if (visibilityRatio > 0.1) {
+      // 10%以上表示されている場合はフィルターを適用
+      slide.classList.add('partially-visible');
+      slide.classList.remove('fully-visible');
+    } else {
+      // ほとんど見えていない場合は両方のクラスを削除
+      slide.classList.remove('fully-visible', 'partially-visible');
+    }
+  });
+}
+
+// アクティブスライドのインデックスを更新する関数
+function updateActiveSlideIndex(block, slideIndex) {
+  const originalSlides = Array.from(block.querySelectorAll('.sbw-highlight-carousel-slide:not(.clone-slide)'));
+  
+  // アクティブ状態を更新
+  originalSlides.forEach((slide, idx) => {
+    if (idx === slideIndex) {
+      slide.classList.add('active');
+    } else {
+      slide.classList.remove('active');
+    }
+  });
+  
+  block.dataset.activeSlide = slideIndex;
+  
+  // インジケーターも更新
+  const indicators = block.querySelectorAll('.sbw-highlight-carousel-slide-indicator');
+  indicators.forEach((indicator, idx) => {
+    if (idx === slideIndex) {
+      indicator.querySelector('button').setAttribute('disabled', 'true');
+    } else {
+      indicator.querySelector('button').removeAttribute('disabled');
+    }
+  });
 }
 
 // スライド切り替えの一時的なロックを管理するための変数
 let isSlideTransitionLocked = false;
 
+// 真の無限スクロール対応のshowSlide関数
 function showSlide(block, slideIndex = 0, instant = false) {
-  // スライド切り替え中の場合は処理をスキップ
   if (isSlideTransitionLocked) return;
   
-  const slides = block.querySelectorAll('.sbw-highlight-carousel-slide:not(.dummy-slide)');
-  const slidesWrapper = block.querySelector('.sbw-highlight-carousel-slides');
-  const allSlides = Array.from(block.querySelectorAll('.sbw-highlight-carousel-slide'));
-  const totalSlides = slides.length;
+  const originalSlides = block.querySelectorAll('.sbw-highlight-carousel-slide:not(.clone-slide)');
+  const totalSlides = originalSlides.length;
 
-  if (!slides.length || !slidesWrapper) return;
+  if (!originalSlides.length) return;
 
-  // 現在のアクティブスライドインデックス
   const currentActiveIndex = parseInt(block.dataset.activeSlide || '0', 10);
   
-  // 範囲外のインデックスを正規化
+  // 範囲外のインデックスを正規化（循環処理）
   let realSlideIndex = slideIndex;
   if (slideIndex >= totalSlides) {
-    realSlideIndex = 0;
+    realSlideIndex = slideIndex % totalSlides;
   } else if (slideIndex < 0) {
-    realSlideIndex = totalSlides - 1;
+    realSlideIndex = totalSlides + (slideIndex % totalSlides);
   }
+
+  // 同じスライドの場合は処理をスキップ
+  if (realSlideIndex === currentActiveIndex && !instant) {
+    return;
+  }
+
+  // トランジションのロックを有効化
+  isSlideTransitionLocked = true;
+
+  // データセットを更新
+  block.dataset.activeSlide = realSlideIndex;
 
   // インジケーターの更新
   const indicators = block.querySelectorAll('.sbw-highlight-carousel-slide-indicator');
@@ -124,155 +427,30 @@ function showSlide(block, slideIndex = 0, instant = false) {
     }
   });
 
-  // スライド表示の更新
-  allSlides.forEach((slide) => {
-    slide.classList.remove('active');
-    slide.style.opacity = '0.5';
-    slide.style.zIndex = '0';
+  // すべてのオリジナルスライドの状態をリセット
+  originalSlides.forEach((slide, idx) => {
+    if (idx === realSlideIndex) {
+      slide.classList.add('active');
+      slide.setAttribute('aria-hidden', 'false');
+    } else {
+      slide.classList.remove('active');
+      slide.setAttribute('aria-hidden', 'true');
+    }
   });
-  
-  // 特殊なケース：最初から最後へ、または最後から最初へ
-  const isJumpingForward = currentActiveIndex === totalSlides - 1 && realSlideIndex === 0;
-  const isJumpingBackward = currentActiveIndex === 0 && realSlideIndex === totalSlides - 1;
-  
-  let targetSlide;
-  
-  // トランジションのロックを有効化
-  isSlideTransitionLocked = true;
-  
-  if (isJumpingForward) {
-    // 最後のスライドから最初のスライドへ
-    // 実際のスライドの前後にあるダミースライドのインデックスを計算
-    const dummyFirstIndex = allSlides.findIndex(slide => 
-      slide.classList.contains('dummy-slide') && slide.dataset.originalIndex === '0'
-    );
-    
-    if (dummyFirstIndex !== -1) {
-      targetSlide = allSlides[dummyFirstIndex];
-      targetSlide.classList.add('active');
-      targetSlide.style.opacity = '1';
-      targetSlide.style.zIndex = '1';
-      
-      // 滑らかなトランジションのため、少し待ってから実際のスライドに切り替える
-      setTimeout(() => {
-        slidesWrapper.style.scrollBehavior = 'auto';
-        
-        // 実際のスライドをアクティブに
-        const realSlide = slides[realSlideIndex];
-        realSlide.classList.add('active');
-        realSlide.style.opacity = '1';
-        realSlide.style.zIndex = '1';
-        
-        // 実際のスライドに即座にスクロール
-        const realSlideCenter = realSlide.offsetLeft + (realSlide.offsetWidth / 2);
-        const containerCenter = slidesWrapper.offsetWidth / 2;
-        slidesWrapper.scrollLeft = realSlideCenter - containerCenter;
-        
-        // スクロール動作を元に戻す
-        setTimeout(() => {
-          slidesWrapper.style.scrollBehavior = 'smooth';
-          isSlideTransitionLocked = false; // ロック解除
-        }, 50);
-      }, 500); // トランジション完了を待つ
-      
-      // 先にスクロール位置を計算
-      const slideCenter = targetSlide.offsetLeft + (targetSlide.offsetWidth / 2);
-      const containerCenter = slidesWrapper.offsetWidth / 2;
-      const scrollPosition = slideCenter - containerCenter;
-      
-      slidesWrapper.scrollTo({
-        left: scrollPosition,
-        behavior: 'smooth',
-      });
-    } else {
-      targetSlide = slides[realSlideIndex];
-      targetSlide.classList.add('active');
-      targetSlide.style.opacity = '1';
-      targetSlide.style.zIndex = '1';
-      isSlideTransitionLocked = false; // ロック解除
-    }
-  } else if (isJumpingBackward) {
-    // 最初のスライドから最後のスライドへ
-    // 実際のスライドの前後にあるダミースライドのインデックスを計算
-    const dummyLastIndex = allSlides.findIndex(slide => 
-      slide.classList.contains('dummy-slide') && slide.dataset.originalIndex === (totalSlides - 1).toString()
-    );
-    
-    if (dummyLastIndex !== -1) {
-      targetSlide = allSlides[dummyLastIndex];
-      targetSlide.classList.add('active');
-      targetSlide.style.opacity = '1';
-      targetSlide.style.zIndex = '1';
-      
-      // 滑らかなトランジションのため、少し待ってから実際のスライドに切り替える
-      setTimeout(() => {
-        slidesWrapper.style.scrollBehavior = 'auto';
-        
-        // 実際のスライドをアクティブに
-        const realSlide = slides[realSlideIndex];
-        realSlide.classList.add('active');
-        realSlide.style.opacity = '1';
-        realSlide.style.zIndex = '1';
-        
-        // 実際のスライドに即座にスクロール
-        const realSlideCenter = realSlide.offsetLeft + (realSlide.offsetWidth / 2);
-        const containerCenter = slidesWrapper.offsetWidth / 2;
-        slidesWrapper.scrollLeft = realSlideCenter - containerCenter;
-        
-        // スクロール動作を元に戻す
-        setTimeout(() => {
-          slidesWrapper.style.scrollBehavior = 'smooth';
-          isSlideTransitionLocked = false; // ロック解除
-        }, 50);
-      }, 500); // トランジション完了を待つ
-      
-      // 先にスクロール位置を計算
-      const slideCenter = targetSlide.offsetLeft + (targetSlide.offsetWidth / 2);
-      const containerCenter = slidesWrapper.offsetWidth / 2;
-      const scrollPosition = slideCenter - containerCenter;
-      
-      slidesWrapper.scrollTo({
-        left: scrollPosition,
-        behavior: 'smooth',
-      });
-    } else {
-      targetSlide = slides[realSlideIndex];
-      targetSlide.classList.add('active');
-      targetSlide.style.opacity = '1';
-      targetSlide.style.zIndex = '1';
-      isSlideTransitionLocked = false; // ロック解除
-    }
-  } else {
-    // 通常の移動
-    targetSlide = slides[realSlideIndex];
-    targetSlide.classList.add('active');
-    targetSlide.style.opacity = '1';
-    targetSlide.style.zIndex = '1';
 
-    // スクロール位置の計算（通常の移動の場合）
-    if (targetSlide && typeof targetSlide.offsetLeft === 'number') {
-      // 中央に表示するためのスクロール位置を計算
-      const slideCenter = targetSlide.offsetLeft + (targetSlide.offsetWidth / 2);
-      const containerCenter = slidesWrapper.offsetWidth / 2;
-      const scrollPosition = slideCenter - containerCenter;
-      
-      slidesWrapper.scrollTo({
-        left: scrollPosition,
-        behavior: instant ? 'auto' : 'smooth',
-      });
-      
-      // 通常の移動では短めの遅延でロック解除
-      setTimeout(() => {
-        isSlideTransitionLocked = false;
-      }, 300);
-    } else {
-      isSlideTransitionLocked = false; // エラー時にロック解除
-    }
-  }
-
-  block.dataset.activeSlide = realSlideIndex;
+  // 最適なスライド（オリジナルまたはクローン）を見つけて移動
+  moveToOptimalSlide(block, realSlideIndex, instant);
   
-  // イベント発火によるアナリティクスなどの処理のため
+  // ロックを解除し、フィルター効果を更新
+  setTimeout(() => {
+    isSlideTransitionLocked = false;
+    // フィルター効果を更新
+    setTimeout(() => {
+      updateVisibilityAndFilters(block);
+    }, 100);
+  }, instant ? 50 : 400);
+  
+  // カスタムイベントの発火
   const slideChangeEvent = new CustomEvent('sbwCarouselSlideChange', { 
     detail: { 
       blockId: block.id,
@@ -283,17 +461,75 @@ function showSlide(block, slideIndex = 0, instant = false) {
   document.dispatchEvent(slideChangeEvent);
 }
 
+// 最適なスライド（オリジナルまたはクローン）に移動
+function moveToOptimalSlide(block, slideIndex, instant = false) {
+  const slidesWrapper = block.querySelector('.sbw-highlight-carousel-slides');
+  const currentScrollLeft = slidesWrapper.scrollLeft;
+  const containerWidth = slidesWrapper.offsetWidth;
+  const containerCenter = currentScrollLeft + (containerWidth / 2);
+  
+  // 指定されたインデックスのすべてのスライド（オリジナル+クローン）を取得
+  const allMatchingSlides = [];
+  
+  // オリジナルスライド
+  const originalSlides = Array.from(block.querySelectorAll('.sbw-highlight-carousel-slide:not(.clone-slide)'));
+  if (originalSlides[slideIndex]) {
+    allMatchingSlides.push(originalSlides[slideIndex]);
+  }
+  
+  // クローンスライド
+  const cloneSlides = Array.from(block.querySelectorAll(`.clone-slide[data-original-index="${slideIndex}"]`));
+  allMatchingSlides.push(...cloneSlides);
+  
+  // 現在の位置から最も近いスライドを選択
+  let closestSlide = null;
+  let minDistance = Infinity;
+  
+  allMatchingSlides.forEach(slide => {
+    const slideCenter = slide.offsetLeft + (slide.offsetWidth / 2);
+    const distance = Math.abs(containerCenter - slideCenter);
+    
+    if (distance < minDistance) {
+      minDistance = distance;
+      closestSlide = slide;
+    }
+  });
+  
+  if (closestSlide) {
+    const slideCenter = closestSlide.offsetLeft + (closestSlide.offsetWidth / 2);
+    const scrollPosition = slideCenter - (containerWidth / 2);
+    
+    if (instant) {
+      slidesWrapper.style.scrollBehavior = 'auto';
+      slidesWrapper.scrollLeft = scrollPosition;
+      requestAnimationFrame(() => {
+        slidesWrapper.style.scrollBehavior = 'smooth';
+      });
+    } else {
+      slidesWrapper.scrollTo({
+        left: scrollPosition,
+        behavior: 'smooth',
+    });
+    }
+  }
+}
+
 // 自動再生のタイマーIDを保持する変数
 let autoplayTimerId = null;
 
-// 自動再生を開始する関数
+// 真の無限スクロール対応の自動再生機能
 function startAutoplay(block, interval = 5000) {
   if (autoplayTimerId) {
     clearInterval(autoplayTimerId);
   }
   
   autoplayTimerId = setInterval(() => {
+    // スライド切り替え中は自動再生をスキップ
+    if (isSlideTransitionLocked) return;
+    
     const currentSlideIndex = parseInt(block.dataset.activeSlide || '0', 10);
+    
+    // 次のスライドを表示（無限に続くスライドへ移動）
     showSlide(block, currentSlideIndex + 1);
   }, interval);
 }
@@ -313,7 +549,8 @@ function bindEvents(block) {
   slideIndicators.querySelectorAll('button').forEach((button) => {
     button.addEventListener('click', (e) => {
       const slideIndicator = e.currentTarget.parentElement;
-      showSlide(block, parseInt(slideIndicator.dataset.targetSlide, 10));
+      const targetSlideIndex = parseInt(slideIndicator.dataset.targetSlide, 10);
+      showSlide(block, targetSlideIndex); // 無限スクロール内の最適な位置へ移動
       
       // インジケーター押下時に自動再生を一時停止
       if (autoplayTimerId) {
@@ -321,7 +558,7 @@ function bindEvents(block) {
         // 一定時間経過後に再開
         setTimeout(() => {
           startAutoplay(block);
-        }, 10000);
+        }, 8000);
       }
     });
   });
@@ -331,46 +568,49 @@ function bindEvents(block) {
   
   if (prevButton) {
     prevButton.addEventListener('click', () => {
-      showSlide(block, parseInt(block.dataset.activeSlide, 10) - 1);
+      const currentSlide = parseInt(block.dataset.activeSlide, 10);
+      showSlide(block, currentSlide - 1); // 無限に続く前のスライドへ
       
       // ボタン押下時に自動再生を一時停止
       if (autoplayTimerId) {
         stopAutoplay();
-        // 一定時間経過後に再開
         setTimeout(() => {
           startAutoplay(block);
-        }, 10000);
+        }, 8000);
       }
     });
   }
   
   if (nextButton) {
     nextButton.addEventListener('click', () => {
-      showSlide(block, parseInt(block.dataset.activeSlide, 10) + 1);
+      const currentSlide = parseInt(block.dataset.activeSlide, 10);
+      showSlide(block, currentSlide + 1); // 無限に続く次のスライドへ
       
       // ボタン押下時に自動再生を一時停止
       if (autoplayTimerId) {
         stopAutoplay();
-        // 一定時間経過後に再開
         setTimeout(() => {
           startAutoplay(block);
-        }, 10000);
+        }, 8000);
       }
     });
   }
 
-  // タッチデバイス用のスワイプイベント
+  // 真の無限スクロール対応のタッチイベント処理
   let startX = 0;
   let endX = 0;
   let isSwiping = false;
-  let swipeThreshold = 50; // スワイプと判定する最小距離（px）
+  let swipeThreshold = 40; // 無限スクロール用の敏感なスワイプ判定
   let touchStartTime = 0;
   let touchEndTime = 0;
-  let velocityThreshold = 0.3; // スワイプと判定する最小速度（px/ms）
+  let velocityThreshold = 0.2; // 自然な速度閾値
   
   const slidesWrapper = block.querySelector('.sbw-highlight-carousel-slides');
   
   slidesWrapper.addEventListener('touchstart', (e) => {
+    // スライド切り替え中はタッチイベントを無視
+    if (isSlideTransitionLocked) return;
+    
     startX = e.touches[0].clientX;
     touchStartTime = Date.now();
     isSwiping = true;
@@ -382,60 +622,65 @@ function bindEvents(block) {
   }, { passive: true });
   
   slidesWrapper.addEventListener('touchmove', (e) => {
-    if (!isSwiping) return;
+    if (!isSwiping || isSlideTransitionLocked) return;
     endX = e.touches[0].clientX;
-    
-    // オプション: タッチ中のドラッグ効果をここに追加できます
   }, { passive: true });
   
   slidesWrapper.addEventListener('touchend', (e) => {
-    if (!isSwiping) return;
+    if (!isSwiping || isSlideTransitionLocked) return;
     
     endX = e.changedTouches[0].clientX;
     touchEndTime = Date.now();
     
     const touchDuration = touchEndTime - touchStartTime;
     const diff = startX - endX;
-    const velocity = Math.abs(diff) / touchDuration; // px/ms
+    const velocity = Math.abs(diff) / touchDuration;
     
-    // スワイプ距離または速度が閾値を超えた場合にのみ次/前のスライドに移動
+    // スワイプ距離または速度が閾値を超えた場合にスライド移動
     if (Math.abs(diff) > swipeThreshold || velocity > velocityThreshold) {
+      const currentSlide = parseInt(block.dataset.activeSlide, 10);
+      
       if (diff > 0) {
-        // 左スワイプ（次へ）
-        showSlide(block, parseInt(block.dataset.activeSlide, 10) + 1);
+        // 左スワイプ（次へ）- 無限に続くスライドへ移動
+        showSlide(block, currentSlide + 1);
       } else {
-        // 右スワイプ（前へ）
-        showSlide(block, parseInt(block.dataset.activeSlide, 10) - 1);
+        // 右スワイプ（前へ）- 無限に続くスライドへ移動
+        showSlide(block, currentSlide - 1);
       }
     }
     
     isSwiping = false;
     
-    // スワイプ後、一定時間経過後に自動再生を再開
+    // スワイプ後の自動再生再開
     setTimeout(() => {
       if (block.dataset.autoplay === 'true') {
         startAutoplay(block);
       }
-    }, 5000);
+    }, 2000);
   }, { passive: true });
 
-  // 通常のスクロールは妨げないようにする（マウスホイールイベントリスナーは削除）
-  // カルーセル内でのデフォルトスクロール動作を防止
-  slidesWrapper.addEventListener('scroll', (e) => {
-    e.preventDefault();
-  }, { passive: false });
-
-  // スライドが画面内に入ったときの処理
+  // 全スライド複製方式対応のスライド監視
   const slideObserver = new IntersectionObserver((entries) => {
+    if (isSlideTransitionLocked) return;
+    
     entries.forEach((entry) => {
-      // 中央付近に表示されたスライドをアクティブに
-      if (entry.isIntersecting && entry.intersectionRatio > 0.8 && !entry.target.classList.contains('dummy-slide')) {
-        updateActiveSlide(entry.target);
+      // リアルスライドのみを監視し、中央付近に表示されたスライドをアクティブに
+      if (entry.isIntersecting && entry.intersectionRatio > 0.5 && !entry.target.classList.contains('clone-slide')) {
+        const slideIndex = parseInt(entry.target.dataset.slideIndex, 10);
+        const currentActiveIndex = parseInt(block.dataset.activeSlide || '0', 10);
+        
+        // 現在のアクティブスライドと異なり、有効なインデックスの場合のみ更新
+        if (slideIndex !== currentActiveIndex && !isNaN(slideIndex) && slideIndex >= 0) {
+          updateActiveSlideIndex(block, slideIndex);
+        }
       }
     });
-  }, { threshold: [0.8] });
+  }, { 
+    threshold: [0.5],
+    rootMargin: '-40px'
+  });
   
-  block.querySelectorAll('.sbw-highlight-carousel-slide:not(.dummy-slide)').forEach((slide) => {
+  block.querySelectorAll('.sbw-highlight-carousel-slide:not(.clone-slide)').forEach((slide) => {
     slideObserver.observe(slide);
   });
   
@@ -477,11 +722,6 @@ function createSlide(row, slideIndex, carouselId) {
   slide.classList.add('sbw-highlight-carousel-slide');
   if (slideIndex === 0) {
     slide.classList.add('active');
-    slide.style.opacity = '1';
-    slide.style.zIndex = '1';
-  } else {
-    slide.style.opacity = '0.5';
-    slide.style.zIndex = '0';
   }
 
   const imageContainer = document.createElement('div');
@@ -515,62 +755,6 @@ function handleResize(block) {
   // リサイズ時にアクティブなスライドを中央に再配置
   const activeSlideIndex = parseInt(block.dataset.activeSlide || '0', 10);
   showSlide(block, activeSlideIndex, true);
-}
-
-// アクティブなスライドの周囲にダミースライドを追加する関数
-function addDummySlides(block) {
-  const slidesWrapper = block.querySelector('.sbw-highlight-carousel-slides');
-  const slides = Array.from(block.querySelectorAll('.sbw-highlight-carousel-slide'));
-  
-  // 最初と最後にダミースライドを追加して無限ループ風に見せる
-  if (slides.length > 1) {
-    // 最後のスライドのコピーを最初に追加
-    const lastSlide = slides[slides.length - 1];
-    const firstDummy = lastSlide.cloneNode(true);
-    firstDummy.classList.remove('active');
-    firstDummy.style.opacity = '0.5';
-    firstDummy.style.zIndex = '0';
-    firstDummy.classList.add('dummy-slide');
-    firstDummy.setAttribute('aria-hidden', 'true');
-    firstDummy.dataset.originalIndex = lastSlide.dataset.originalIndex;
-    slidesWrapper.prepend(firstDummy);
-    
-    // 最初のスライドのコピーを最後に追加
-    const firstSlide = slides[0];
-    const lastDummy = firstSlide.cloneNode(true);
-    lastDummy.classList.remove('active');
-    lastDummy.style.opacity = '0.5';
-    lastDummy.style.zIndex = '0';
-    lastDummy.classList.add('dummy-slide');
-    lastDummy.setAttribute('aria-hidden', 'true');
-    lastDummy.dataset.originalIndex = firstSlide.dataset.originalIndex;
-    slidesWrapper.append(lastDummy);
-    
-    // オプション：より滑らかな移動のために追加のダミースライドを追加
-    if (slides.length >= 3) {
-      // 2番目のスライドのコピーも最後に追加
-      const secondSlide = slides[1];
-      const secondDummy = secondSlide.cloneNode(true);
-      secondDummy.classList.remove('active');
-      secondDummy.style.opacity = '0.5';
-      secondDummy.style.zIndex = '0';
-      secondDummy.classList.add('dummy-slide');
-      secondDummy.setAttribute('aria-hidden', 'true');
-      secondDummy.dataset.originalIndex = secondSlide.dataset.originalIndex;
-      slidesWrapper.append(secondDummy);
-      
-      // 最後から2番目のスライドのコピーも最初に追加
-      const secondLastSlide = slides[slides.length - 2];
-      const secondLastDummy = secondLastSlide.cloneNode(true);
-      secondLastDummy.classList.remove('active');
-      secondLastDummy.style.opacity = '0.5';
-      secondLastDummy.style.zIndex = '0';
-      secondLastDummy.classList.add('dummy-slide');
-      secondLastDummy.setAttribute('aria-hidden', 'true');
-      secondLastDummy.dataset.originalIndex = secondLastSlide.dataset.originalIndex;
-      slidesWrapper.prepend(secondLastDummy);
-    }
-  }
 }
 
 let carouselId = 0;
@@ -638,13 +822,15 @@ export default async function decorate(block) {
   });
 
   if (!isSingleSlide) {
-    // ダミースライドを追加して無限ループ風に見せる
-    addDummySlides(block);
+    // 循環カルーセルの初期化
+    initializeCircularCarousel(block);
     
-    // カルーセルの初期化
-    initializeCarouselWithClones(block);
+    showSlide(block, 0, true);
     
-    bindEvents(block);
+    // イベントをバインド
+    setTimeout(() => {
+      bindEvents(block);
+    }, 100);
     
     // リサイズイベントのリスナーを追加（デバウンス処理つき）
     let resizeTimer;
@@ -655,12 +841,12 @@ export default async function decorate(block) {
       }, 100);
     });
     
-    // 自動再生の開始（オプション）
+    // 自動再生の開始（真の無限スクロール対応）
     if (block.dataset.autoplay === 'true') {
       // ページロード時に少し遅らせて自動再生を開始
       setTimeout(() => {
-        startAutoplay(block, 7000); // 7秒間隔で自動再生
-      }, 2000);
+        startAutoplay(block, 3500); // 3.5秒間隔で自動再生（無限に続く効果を実感）
+      }, 800);
     }
     
     // パフォーマンス改善のために、アイドル時間にプリロード
