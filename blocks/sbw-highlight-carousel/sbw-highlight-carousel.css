@@ -157,6 +157,18 @@
     transition: opacity 0.6s ease;
   }
 
+  .sbw-highlight-carousel .sbw-highlight-carousel-slide .sbw-highlight-carousel-slide-content a {
+    color: #fff;
+    text-decoration: underline;
+    text-decoration-color: #fff;
+    transition: text-decoration-color 0.2s ease-in;
+    text-underline-position: from-font;
+  }
+
+  .sbw-highlight-carousel .sbw-highlight-carousel-slide .sbw-highlight-carousel-slide-content a:hover {
+    text-decoration-color: transparent;
+  }
+
   .sbw-highlight-carousel .sbw-highlight-carousel-slide .sbw-highlight-carousel-slide-content p {
     font-weight: 400;
     line-height: 1.8;
