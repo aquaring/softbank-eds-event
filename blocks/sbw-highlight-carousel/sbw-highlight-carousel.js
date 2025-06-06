@@ -11,24 +11,15 @@ function removeButtonContainer(block) {
 
 function updateActiveSlide(slide) {
   const block = slide.closest('.sbw-highlight-carousel');
-  if (!block) return;
-  
-  // クローンスライドの場合は処理しない
-  if (slide.classList.contains('clone-slide')) return;
+  if (!block || slide.classList.contains('clone-slide')) return;
   
   const slideIndex = parseInt(slide.dataset.slideIndex, 10);
   block.dataset.activeSlide = slideIndex;
 
   const slides = block.querySelectorAll('.sbw-highlight-carousel-slide:not(.clone-slide)');
-
   slides.forEach((aSlide, idx) => {
     aSlide.setAttribute('aria-hidden', idx !== slideIndex);
-    if (idx === slideIndex) {
-      aSlide.classList.add('active');
-    } else {
-      aSlide.classList.remove('active');
-    }
-    
+    aSlide.classList.toggle('active', idx === slideIndex);
     aSlide.querySelectorAll('a').forEach((link) => {
       if (idx !== slideIndex) {
         link.setAttribute('tabindex', '-1');
@@ -40,11 +31,7 @@ function updateActiveSlide(slide) {
 
   const indicators = block.querySelectorAll('.sbw-highlight-carousel-slide-indicator');
   indicators.forEach((indicator, idx) => {
-    if (idx !== slideIndex) {
-      indicator.querySelector('button').removeAttribute('disabled');
-    } else {
-      indicator.querySelector('button').setAttribute('disabled', 'true');
-    }
+    indicator.querySelector('button').disabled = idx === slideIndex;
   });
 }
 
@@ -55,6 +42,11 @@ function initializeCircularCarousel(block) {
   
   if (!slides.length || !slidesWrapper) return;
   
+  // スムーズスクロールの初期設定
+  slidesWrapper.style.scrollBehavior = 'smooth';
+  slidesWrapper.style.scrollTimingFunction = 'cubic-bezier(0.4, 0, 0.2, 1)';
+  slidesWrapper.style.transitionDuration = '600ms';
+  
   // 真の無限スクロール用の初期クローンスライドを作成
   createInitialInfiniteSlides(block);
   
@@ -63,11 +55,7 @@ function initializeCircularCarousel(block) {
   
   // すべてのスライドからactiveクラスを削除してから最初のスライドをアクティブに
   slides.forEach((slide, idx) => {
-    if (idx === 0) {
-      slide.classList.add('active');
-    } else {
-      slide.classList.remove('active');
-    }
+    slide.classList.toggle('active', idx === 0);
   });
   
   // 初期位置を中央のオリジナルスライドに設定
@@ -364,11 +352,7 @@ function updateActiveSlideIndex(block, slideIndex) {
   
   // アクティブ状態を更新
   originalSlides.forEach((slide, idx) => {
-    if (idx === slideIndex) {
-      slide.classList.add('active');
-    } else {
-      slide.classList.remove('active');
-    }
+    slide.classList.toggle('active', idx === slideIndex);
   });
   
   block.dataset.activeSlide = slideIndex;
@@ -376,11 +360,7 @@ function updateActiveSlideIndex(block, slideIndex) {
   // インジケーターも更新
   const indicators = block.querySelectorAll('.sbw-highlight-carousel-slide-indicator');
   indicators.forEach((indicator, idx) => {
-    if (idx === slideIndex) {
-      indicator.querySelector('button').setAttribute('disabled', 'true');
-    } else {
-      indicator.querySelector('button').removeAttribute('disabled');
-    }
+    indicator.querySelector('button').disabled = idx === slideIndex;
   });
 }
 
@@ -420,11 +400,7 @@ function showSlide(block, slideIndex = 0, instant = false) {
   // インジケーターの更新
   const indicators = block.querySelectorAll('.sbw-highlight-carousel-slide-indicator');
   indicators.forEach((indicator, idx) => {
-    if (idx === realSlideIndex) {
-      indicator.querySelector('button').setAttribute('disabled', 'true');
-    } else {
-      indicator.querySelector('button').removeAttribute('disabled');
-    }
+    indicator.querySelector('button').disabled = idx === realSlideIndex;
   });
 
   // すべてのオリジナルスライドの状態をリセット
@@ -504,12 +480,43 @@ function moveToOptimalSlide(block, slideIndex, instant = false) {
       slidesWrapper.scrollLeft = scrollPosition;
       requestAnimationFrame(() => {
         slidesWrapper.style.scrollBehavior = 'smooth';
+        slidesWrapper.style.scrollTimingFunction = 'cubic-bezier(0.4, 0, 0.2, 1)';
+        slidesWrapper.style.transitionDuration = '600ms';
       });
     } else {
+      slidesWrapper.style.scrollBehavior = 'smooth';
+      slidesWrapper.style.scrollTimingFunction = 'cubic-bezier(0.4, 0, 0.2, 1)';
+      slidesWrapper.style.transitionDuration = '600ms';
+      
       slidesWrapper.scrollTo({
         left: scrollPosition,
-        behavior: 'smooth',
-    });
+        behavior: 'smooth'
+      });
+
+      // アニメーション終了後に中央のオリジナルスライドに瞬時に移動
+      const transitionEndHandler = () => {
+        const originalSlide = originalSlides[slideIndex];
+        if (originalSlide) {
+          const originalCenter = originalSlide.offsetLeft + (originalSlide.offsetWidth / 2);
+          const originalScrollPosition = originalCenter - (containerWidth / 2);
+          
+          requestAnimationFrame(() => {
+            slidesWrapper.style.scrollBehavior = 'auto';
+            slidesWrapper.style.transitionDuration = '0ms';
+            slidesWrapper.scrollLeft = originalScrollPosition;
+            
+            requestAnimationFrame(() => {
+              slidesWrapper.style.scrollBehavior = 'smooth';
+              slidesWrapper.style.scrollTimingFunction = 'cubic-bezier(0.4, 0, 0.2, 1)';
+              slidesWrapper.style.transitionDuration = '600ms';
+            });
+          });
+        }
+        
+        slidesWrapper.removeEventListener('scrollend', transitionEndHandler);
+      };
+
+      slidesWrapper.addEventListener('scrollend', transitionEndHandler, { once: true });
     }
   }
 }
