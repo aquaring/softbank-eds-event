@@ -13,6 +13,8 @@ export default async function decorate(block) {
   const itemTitleClass = `${itemClass}-title`;
   const itemDetailsClass = `${itemClass}-details`;
   const readMoreClass = `${itemClass}-readmore`;
+  const itemSpeakersClass = `${itemClass}-speakers`;
+  const itemSpeakersItemClass = `${itemSpeakersClass}-item`;
 
   // セッションのデータを格納する配列
   let sessionData = [];
@@ -63,7 +65,6 @@ export default async function decorate(block) {
                 caption: '',
                 link: ''
               };
-              console.log('sessionInfo', sessionInfo);
 
               sessionInfoDivs.forEach(div => {
                 const key = div.querySelector('div:first-child')?.textContent?.trim();
@@ -181,6 +182,25 @@ export default async function decorate(block) {
               });
               
               contentContainer.appendChild(detailsElement);
+            }
+
+            // 登壇者の処理
+            if (session.speakers.length > 0) {
+              const speakersWrapper = document.createElement('div');
+              speakersWrapper.className = itemSpeakersClass;
+
+              session.speakers.forEach(speaker => {
+                const speakerElement = document.createElement('div');
+                speakerElement.className = itemSpeakersItemClass;
+                speakerElement.innerHTML = `
+                  <div class="sbw-card-session-item-speakers-image">
+                    <img src="${speaker.image}" alt="${speaker.name}">
+                  </div>
+                  <div class="sbw-card-session-item-speakers-name">${speaker.name}</div>
+                `;
+                speakersWrapper.appendChild(speakerElement);
+              });
+              contentContainer.appendChild(speakersWrapper);
             }
 
             // リンクの処理
