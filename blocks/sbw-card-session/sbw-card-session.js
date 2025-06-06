@@ -196,7 +196,10 @@ export default async function decorate(block) {
                   <div class="sbw-card-session-item-speakers-image">
                     <img src="${speaker.image}" alt="${speaker.name}">
                   </div>
-                  <div class="sbw-card-session-item-speakers-name">${speaker.name}</div>
+                  <div class="sbw-card-session-item-speakers-content">
+                    <div class="sbw-card-session-item-speakers-name">${speaker.name}</div>
+                    <div class="sbw-card-session-item-speakers-company">${speaker.company}</div>
+                  </div>
                 `;
                 speakersWrapper.appendChild(speakerElement);
               });
