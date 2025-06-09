@@ -219,11 +219,20 @@ button.primary {
 
 a.button.secondary,
 button.secondary {
-  background-color: var(--background-color);
-  border: 1px solid var(--border-black-02);
+  padding: 14px 56px 14px 64px;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  box-sizing: border-box;
+  background-color: transparent;
+  border: 1px solid var(--text-black);
   color: var(--text-black);
 
   &::after {
+    position: relative;
+    top: auto;
+    right: auto;
+    transform: none;
     background-image: url("../icons/arrow-right.svg") !important;
   }
 
@@ -232,6 +241,32 @@ button.secondary {
       background-image: url("../icons/target-blank-black.svg") !important;
     }
   }
+
+  @media (width <= 768px) {
+    padding: 14px 20px 14px 28px;
+    width: 100%;
+  }
+}
+
+section.text-white a.button.secondary,
+section.text-white button.secondary {
+  border-color: var(--text-white);
+  color: var(--text-white);
+
+  &::after {
+    background-image: url("../icons/arrow-white.svg") !important;
+  }
+
+  &[target="_blank"]{
+    &::after {
+      background-image: url("../icons/target-blank-white.svg") !important;
+    }
+  }
+}
+
+.button-container:has(.button.secondary) {
+  text-align: center;
+  margin-top: 64px;
 }
 
 a.button.tertiary,
@@ -490,7 +525,7 @@ section.sbw-section-bg-img{
     max-width: 100%;
     background-repeat: no-repeat;
     background-size: cover;
-    padding: 0;
+    padding: 0 !important;
 
     .sbw-section-bg-img-wrap{
         max-width: 1248px;
