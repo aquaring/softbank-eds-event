@@ -1,5 +1,5 @@
-.sbw-partners-container {
-    margin-bottom: 120px !important;
+main > .section.sbw-partners-container {
+    padding-bottom: 120px;
 }
 
 .sbw-partners-title {
