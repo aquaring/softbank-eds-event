@@ -1,21 +1,61 @@
 .sbw-session-information{
-  display: flex;
-  flex-direction: column;
-  gap: 32px;
-  border-radius: 4px;
-  background: var(--background-gray-01);
-  padding: 24px 40px;
-  margin-top: 32px;
 
   @media (width <= 768px) {
-    padding: 24px 16px;
   }
 }
 
 .sbw-session-information-item{
 }
 
-.sbw-session-information-image{
+.sbw-session-information-item.tag p{
+  display: inline-block;
+  text-align: center;
+  font-size: 18px;
+  font-weight: 500;
+  line-height: 1.25;
+  padding: 4px 24px;
+  border-radius: 40px;
+  width: fit-content;
+  background-color: var(--background-purple-01);
+  color: var(--background-color);
+
+  @media (width <= 768px) {
+    padding: 4px 40px;
+  }
+}
+
+.sbw-session-information-item.tag + .sbw-session-information-item.title{
+  margin-top: 64px;
+
+  @media (width <= 768px) {
+    margin-top: 16px;
+  }
+}
+
+.sbw-session-information-item.title h2{
+  margin-top: 0;
+}
+
+.sbw-session-information-item.description{
+  line-height: 1.5;
+  margin-top: 16px;
+}
+
+.sbw-session-information-item.caption{
+  margin-top: 16px;
+}
+.sbw-session-information-item.caption ul li{
+  color: var(--text-gray);
+  font-size: 12px;
+  line-height: 125%; /* 15px */
+}
+
+.sbw-session-information-item.link{
+  margin-top: 24px;
+}
+
+
+/* .sbw-session-information-image{
   width: 100px;
   height: 100px;
   border-radius: 4px;
@@ -48,4 +88,4 @@
 .sbw-session-information-name{
   font-size: 18px;
   font-weight: 700;
-}
+} */
