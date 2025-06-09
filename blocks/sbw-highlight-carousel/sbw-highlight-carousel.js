@@ -307,44 +307,6 @@ function positionToOriginalSlide(block, slideIndex, instant = false) {
   }, instant ? 50 : 200);
 }
 
-// スライドの表示状態とフィルター効果を更新する関数
-function updateVisibilityAndFilters(block) {
-  const slidesWrapper = block.querySelector('.sbw-highlight-carousel-slides');
-  if (!slidesWrapper) return;
-  
-  const scrollLeft = slidesWrapper.scrollLeft;
-  const containerWidth = slidesWrapper.offsetWidth;
-  const viewportLeft = scrollLeft;
-  const viewportRight = scrollLeft + containerWidth;
-  
-  // すべてのスライド（オリジナル + クローン）を取得
-  const allSlides = Array.from(block.querySelectorAll('.sbw-highlight-carousel-slide'));
-  
-  allSlides.forEach(slide => {
-    const slideLeft = slide.offsetLeft;
-    const slideRight = slideLeft + slide.offsetWidth;
-    
-    // スライドがビューポート内にどの程度表示されているかを計算
-    const visibleLeft = Math.max(slideLeft, viewportLeft);
-    const visibleRight = Math.min(slideRight, viewportRight);
-    const visibleWidth = Math.max(0, visibleRight - visibleLeft);
-    const visibilityRatio = visibleWidth / slide.offsetWidth;
-    
-    // 表示状態に応じてクラスを更新
-    if (visibilityRatio >= 0.8) {
-      // 80%以上表示されている場合はフィルターを除去
-      slide.classList.add('fully-visible');
-      slide.classList.remove('partially-visible');
-    } else if (visibilityRatio > 0.1) {
-      // 10%以上表示されている場合はフィルターを適用
-      slide.classList.add('partially-visible');
-      slide.classList.remove('fully-visible');
-    } else {
-      // ほとんど見えていない場合は両方のクラスを削除
-      slide.classList.remove('fully-visible', 'partially-visible');
-    }
-  });
-}
 
 // アクティブスライドのインデックスを更新する関数
 function updateActiveSlideIndex(block, slideIndex) {
@@ -403,28 +365,57 @@ function showSlide(block, slideIndex = 0, instant = false) {
     indicator.querySelector('button').disabled = idx === realSlideIndex;
   });
 
-  // すべてのオリジナルスライドの状態をリセット
-  originalSlides.forEach((slide, idx) => {
-    if (idx === realSlideIndex) {
-      slide.classList.add('active');
-      slide.setAttribute('aria-hidden', 'false');
-    } else {
-      slide.classList.remove('active');
-      slide.setAttribute('aria-hidden', 'true');
-    }
-  });
-
   // 最適なスライド（オリジナルまたはクローン）を見つけて移動
   moveToOptimalSlide(block, realSlideIndex, instant);
   
-  // ロックを解除し、フィルター効果を更新
-  setTimeout(() => {
+  // スライドの移動が完全に止まった時点でのみクラスを更新
+  const slidesWrapper = block.querySelector('.sbw-highlight-carousel-slides');
+  const transitionEndHandler = () => {
     isSlideTransitionLocked = false;
-    // フィルター効果を更新
-    setTimeout(() => {
-      updateVisibilityAndFilters(block);
-    }, 100);
-  }, instant ? 50 : 400);
+    
+    // カルーセルが止まった時点で中央のスライドを判定してクラスを更新
+    const containerWidth = slidesWrapper.offsetWidth;
+    const containerCenter = slidesWrapper.scrollLeft + (containerWidth / 2);
+    const allSlides = Array.from(block.querySelectorAll('.sbw-highlight-carousel-slide'));
+    
+    allSlides.forEach(slide => {
+      const slideCenter = slide.offsetLeft + (slide.offsetWidth / 2);
+      const distanceFromCenter = Math.abs(containerCenter - slideCenter);
+      
+      if (distanceFromCenter < slide.offsetWidth * 0.01) {
+        slide.classList.add('fully-visible');
+        slide.classList.remove('partially-visible');
+      } else {
+        slide.classList.add('partially-visible');
+        slide.classList.remove('fully-visible');
+      }
+    });
+    
+    slidesWrapper.removeEventListener('scrollend', transitionEndHandler);
+  };
+  
+  if (instant) {
+    isSlideTransitionLocked = false;
+    // instant の場合も同様のクラス更新処理
+    const containerWidth = slidesWrapper.offsetWidth;
+    const containerCenter = slidesWrapper.scrollLeft + (containerWidth / 2);
+    const allSlides = Array.from(block.querySelectorAll('.sbw-highlight-carousel-slide'));
+    
+    allSlides.forEach(slide => {
+      const slideCenter = slide.offsetLeft + (slide.offsetWidth / 2);
+      const distanceFromCenter = Math.abs(containerCenter - slideCenter);
+      
+      if (distanceFromCenter < slide.offsetWidth * 0.01) {
+        slide.classList.add('fully-visible');
+        slide.classList.remove('partially-visible');
+      } else {
+        slide.classList.add('partially-visible');
+        slide.classList.remove('fully-visible');
+      }
+    });
+  } else {
+    slidesWrapper.addEventListener('scrollend', transitionEndHandler, { once: true });
+  }
   
   // カスタムイベントの発火
   const slideChangeEvent = new CustomEvent('sbwCarouselSlideChange', { 
@@ -499,6 +490,19 @@ function moveToOptimalSlide(block, slideIndex, instant = false) {
         if (originalSlide) {
           const originalCenter = originalSlide.offsetLeft + (originalSlide.offsetWidth / 2);
           const originalScrollPosition = originalCenter - (containerWidth / 2);
+          
+          // スライドが中央に来て止まったタイミングでクラスを更新
+          originalSlides.forEach((slide, idx) => {
+            if (idx === slideIndex) {
+              slide.classList.add('active', 'fully-visible');
+              slide.classList.remove('partially-visible');
+              slide.setAttribute('aria-hidden', 'false');
+            } else {
+              slide.classList.remove('active', 'fully-visible');
+              slide.classList.add('partially-visible');
+              slide.setAttribute('aria-hidden', 'true');
+            }
+          });
           
           requestAnimationFrame(() => {
             slidesWrapper.style.scrollBehavior = 'auto';
