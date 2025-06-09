@@ -67,23 +67,22 @@
     margin: 0;
     filter: brightness(0.6) saturate(0.8);
     text-align: center;
-    transition: opacity 0.3s ease, filter 0.3s ease;
     will-change: opacity, filter;
     transform: translateZ(0);
     backface-visibility: hidden;
   }
   
-  /* 完全に表示されているスライド（80%以上）はクリアに表示 */
+  /* 中央に表示されているスライドはクリアに表示 */
   .sbw-highlight-carousel .sbw-highlight-carousel-slide.fully-visible {
     opacity: 1;
     filter: none;
     z-index: 2;
   }
   
-  /* 部分的に表示されているスライドはフィルターを適用 */
+  /* 中央以外のスライドはフィルターを適用 */
   .sbw-highlight-carousel .sbw-highlight-carousel-slide.partially-visible {
-    opacity: 0.6;
-    filter: brightness(0.5) saturate(0.7);
+    opacity: 0.5;
+    filter: brightness(0.6) saturate(0.8);
     z-index: 1;
   }
   
@@ -103,10 +102,9 @@
     transform: translateZ(0);
     backface-visibility: hidden;
     scroll-snap-align: none;
-    transition: opacity 0.3s ease, filter 0.3s ease;
   }
   
-  /* クローンスライドも完全表示の場合はクリアに */
+  /* クローンスライドも中央表示の場合はクリアに */
   .sbw-highlight-carousel .sbw-highlight-carousel-slide.clone-slide.fully-visible {
     opacity: 1;
     filter: none;
@@ -114,10 +112,10 @@
     pointer-events: auto;
   }
   
-  /* クローンスライドも部分表示の場合はフィルターを適用 */
+  /* クローンスライドも中央以外の場合はフィルターを適用 */
   .sbw-highlight-carousel .sbw-highlight-carousel-slide.clone-slide.partially-visible {
-    opacity: 0.6;
-    filter: brightness(0.5) saturate(0.7);
+    opacity: 0.5;
+    filter: brightness(0.6) saturate(0.8);
     z-index: 1;
     pointer-events: none;
   }
@@ -296,6 +294,16 @@
       flex: 0 0 100%;
       width: 100%;
       padding-inline: 24px;
+      opacity: 1 !important;
+      filter: none !important;
+    }
+
+    /* クローンスライドのフィルターも無効化 */
+    .sbw-highlight-carousel .sbw-highlight-carousel-slide.clone-slide,
+    .sbw-highlight-carousel .sbw-highlight-carousel-slide.partially-visible,
+    .sbw-highlight-carousel .sbw-highlight-carousel-slide.clone-slide.partially-visible {
+      opacity: 1 !important;
+      filter: none !important;
     }
     
     .sbw-highlight-carousel .sbw-highlight-carousel-slide .sbw-highlight-carousel-slide-content p {
