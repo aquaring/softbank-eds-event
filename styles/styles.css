@@ -611,6 +611,10 @@ main > .section.sbw-subpage-section{
     max-width: 1248px;
     margin: 0 auto;
     padding: 64px 24px;
+
+    @media (width <= 768px) {
+        padding: 40px 24px;
+    }
 }
 
 .sbw-subpage-section-wrapper h2{
@@ -634,4 +638,13 @@ main > .section.sbw-subpage-section{
 
 main > .section.sbw-subpage-section.bg-gray{
     background: var(--background-gray-04);
+}
+
+
+.sbw-subpage-section + .sbw-section-contact {
+    margin-top: 56px;
+
+    @media (width <= 768px) {
+        margin-top: 40px;
+    }
 }

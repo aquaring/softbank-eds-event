@@ -78,17 +78,22 @@
                 border: 1px solid var(--border-black-02);
 
                 @media (width <= 768px) {
-                    padding: 8px;
+                    padding: 16px 10px;
                 }
             }
 
             th{
                 width: 240px;
-                text-align: center;
+                text-align: center !important;
                 background-color: var(--background-gray-01);
 
                 @media (width <= 768px) {
-                    width: 120px;
+                    width: 80px;
+
+                    > p {
+                        font-size: 16px;
+                        line-height: 1.75;
+                    }
                 }
 
                 > p:first-child{
@@ -101,6 +106,14 @@
 
                 > p:first-child{
                     margin-top: 0;
+                }
+                
+                @media (width <= 768px) {
+                     p {
+                        font-size: 16px;
+                        line-height: 1.75;
+                    }
+
                 }
             }
         }
