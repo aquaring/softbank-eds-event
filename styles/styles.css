@@ -595,9 +595,14 @@ section.sbw-subpage-title{
     padding-top: 120px;
     
     .sbw-subpage-title-text{
+        font-size: 16px;
         margin-top: 40px;
         line-height: 150%; /* 24px */
         text-align: center;
+
+        @media (width <= 768px) {
+            text-align: left;
+        }
     }
 }
 
