@@ -15,6 +15,8 @@ export default async function decorate(block) {
   const readMoreClass = `${itemClass}-readmore`;
   const itemSpeakersClass = `${itemClass}-speakers`;
   const itemSpeakersItemClass = `${itemSpeakersClass}-item`;
+  const sessionTypeClass = 'type-special';
+  let isSpecial = false;
 
   // セッションのデータを格納する配列
   let sessionData = [];
@@ -55,6 +57,11 @@ export default async function decorate(block) {
               // HTMLをパース
               const parser = new DOMParser();
               const doc = parser.parseFromString(htmlContent, 'text/html');
+              const sectionMetadata = doc.querySelector('.section-metadata');
+              // 全ての子要素のテキストコンテンツをチェック
+              const allTextContent = sectionMetadata.textContent || '';
+              isSpecial = allTextContent.includes(sessionTypeClass);
+              
               
               // セッション情報を取得
               const sessionInfoDivs = doc.querySelectorAll(`.${sessionInfoTable} > div`);
@@ -63,7 +70,8 @@ export default async function decorate(block) {
                 title: '',
                 description: '',
                 caption: '',
-                link: ''
+                link: '',
+                isSpecial: isSpecial
               };
 
               sessionInfoDivs.forEach(div => {
@@ -130,9 +138,11 @@ export default async function decorate(block) {
 
             // 画像セクションの処理
             const imageSection = row.children[0];
-            if (imageSection) {
+            if (imageSection && session.sessionInfo.isSpecial) {
+              const imgElement = document.createElement('img');
               const imageSectionClone = imageSection.cloneNode(true);
               imageSectionClone.className = itemImageClass;
+              imageSectionClone.appendChild(imgElement);
               cardInner.appendChild(imageSectionClone);
             }
 
@@ -192,10 +202,9 @@ export default async function decorate(block) {
               session.speakers.forEach(speaker => {
                 const speakerElement = document.createElement('div');
                 speakerElement.className = itemSpeakersItemClass;
-                speakerElement.innerHTML = `
-                  <div class="sbw-card-session-item-speakers-image">
+                speakerElement.innerHTML = `${!session.sessionInfo.isSpecial ? `<div class="sbw-card-session-item-speakers-image">
                     <img src="${speaker.image}" alt="${speaker.name}">
-                  </div>
+                  </div>` : ''}`+`
                   <div class="sbw-card-session-item-speakers-content">
                     <div class="sbw-card-session-item-speakers-name">${speaker.name}</div>
                     <div class="sbw-card-session-item-speakers-company">${speaker.company}</div>
