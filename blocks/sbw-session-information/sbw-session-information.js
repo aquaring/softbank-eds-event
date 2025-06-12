@@ -55,6 +55,20 @@ export default function decorate(block) {
           const linkContent = linkDiv.innerHTML;
           linkDiv.remove();
           data.innerHTML = linkContent;
+          
+          // tertiaryボタンの装飾
+          const linkAnchor = data.querySelector('p > strong > em > a');
+          if (linkAnchor) {
+            const p = linkAnchor.parentElement.parentElement.parentElement;
+            if (
+              linkAnchor.parentElement.tagName === 'EM'
+              && linkAnchor.parentElement.parentElement.tagName === 'STRONG'
+              && p.tagName === 'P'
+            ) {
+              linkAnchor.className = 'button tertiary';
+              p.classList.add('button-container');
+            }
+          }
         }
         break;
       default:
