@@ -39,7 +39,7 @@ body[style*="position: fixed"] {
   overscroll-behavior: none;
   width: 100%;
   text-align: center;
-  padding: 40px 64px;
+  padding: 60px 64px 40px;
   position: relative;
 
   @media (width <= 768px) {
