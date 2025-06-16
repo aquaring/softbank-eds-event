@@ -467,7 +467,7 @@ section.sbw-subpage-title {
     max-width: 100%;
 
     @media (width <= 768px) {
-        font-size: 56px;
+        font-size: 55px;
     }
 }
 .sbw-section-bg-img-content-text,
