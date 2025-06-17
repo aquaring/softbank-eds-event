@@ -3,6 +3,10 @@
   border-radius: 8px;
   border: 1px solid var(--border-gray);
   margin-top: 36px;
+
+  @media (width <= 768px) {
+    border-radius: 4px;
+  }
 }
 .sbw-accordion-qa-item {
   border-bottom: 1px solid var(--border-gray);

@@ -1,0 +1,335 @@
+.sbw-highlight-carousel-container{
+    max-width: 100% !important;
+    padding: 0 !important;
+    margin: 0 !important;
+  }
+  
+  main > .section > div.sbw-highlight-carousel-wrapper {
+    max-width: none;
+    padding: 0;
+    margin: 0;
+  }
+  
+  .sbw-section-bg-img-wrap .sbw-highlight-carousel-wrapper {
+    width: 100vw;
+    margin-left: calc(50% - 50vw);
+    margin-right: calc(50% - 50vw);
+  }
+  
+  .sbw-highlight-carousel {
+    color: #fff;
+    position: relative;
+    overflow: hidden;
+    width: 100%;
+  }
+  
+  .sbw-highlight-carousel .sbw-highlight-carousel-slides-container {
+    position: relative;
+    margin: 0 auto;
+    max-width: 100%;
+    padding: 0;
+    overflow: hidden;
+  }
+  
+  .sbw-highlight-carousel .sbw-highlight-carousel-slides {
+    display: flex;
+    scroll-behavior: smooth;
+    scroll-snap-type: none;
+    overflow-x: scroll;
+    overflow-y: hidden;
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+    padding: 0 calc(50vw - 200px);
+    gap: 144px;
+    will-change: scroll-position;
+    justify-content: flex-start;
+    position: relative;
+    -webkit-overflow-scrolling: touch;
+    transform: translateZ(0);
+    transition: scroll-behavior 0.1s ease;
+    contain: layout style paint;
+    isolation: isolate;
+  }
+  
+  .sbw-highlight-carousel .sbw-highlight-carousel-slides::-webkit-scrollbar {
+    display: none;
+  }
+  
+  .sbw-highlight-carousel .sbw-highlight-carousel-slide {
+    flex: 0 0 800px;
+    width: 800px;
+    scroll-snap-align: none;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    position: relative;
+    opacity: 0.5;
+    margin: 0;
+    filter: brightness(0.6) saturate(0.8);
+    text-align: center;
+    will-change: opacity, filter;
+    transform: translateZ(0);
+    backface-visibility: hidden;
+  }
+  
+  /* 中央に表示されているスライドはクリアに表示 */
+  .sbw-highlight-carousel .sbw-highlight-carousel-slide.fully-visible {
+    opacity: 1;
+    filter: none;
+    z-index: 2;
+  }
+  
+  /* 中央以外のスライドはフィルターを適用 */
+  .sbw-highlight-carousel .sbw-highlight-carousel-slide.partially-visible {
+    opacity: 0.5;
+    filter: brightness(0.6) saturate(0.8);
+    z-index: 1;
+  }
+  
+  /* アクティブクラス用の従来の対応も保持 */
+  .sbw-highlight-carousel .sbw-highlight-carousel-slide.active {
+    opacity: 1;
+    z-index: 2;
+    filter: none;
+  }
+  
+  /* 真の無限スクロール対応のクローンスライドスタイル */
+  .sbw-highlight-carousel .sbw-highlight-carousel-slide.clone-slide {
+    opacity: 0.5;
+    filter: brightness(0.6) saturate(0.8);
+    pointer-events: none;
+    will-change: opacity, filter;
+    transform: translateZ(0);
+    backface-visibility: hidden;
+    scroll-snap-align: none;
+  }
+  
+  /* クローンスライドも中央表示の場合はクリアに */
+  .sbw-highlight-carousel .sbw-highlight-carousel-slide.clone-slide.fully-visible {
+    opacity: 1;
+    filter: none;
+    z-index: 2;
+    pointer-events: auto;
+  }
+  
+  /* クローンスライドも中央以外の場合はフィルターを適用 */
+  .sbw-highlight-carousel .sbw-highlight-carousel-slide.clone-slide.partially-visible {
+    opacity: 0.5;
+    filter: brightness(0.6) saturate(0.8);
+    z-index: 1;
+    pointer-events: none;
+  }
+  
+  /* 左右のクローンスライドのパフォーマンス最適化 */
+  .sbw-highlight-carousel .sbw-highlight-carousel-slide.clone-left,
+  .sbw-highlight-carousel .sbw-highlight-carousel-slide.clone-right {
+    contain: layout style paint;
+    content-visibility: auto;
+  }
+  
+  .sbw-highlight-carousel .sbw-highlight-carousel-slide .sbw-highlight-carousel-slide-image {
+    width: 100%;
+    position: relative;
+    overflow: hidden;
+    margin: 0 auto;
+  }
+  
+  .sbw-highlight-carousel .sbw-highlight-carousel-slide .sbw-highlight-carousel-slide-image picture {
+    display: block;
+    width: 100%;
+  }
+  
+  .sbw-highlight-carousel .sbw-highlight-carousel-slide .sbw-highlight-carousel-slide-image picture > img {
+    aspect-ratio: 16 / 9;
+    object-fit: cover;
+    width: 100%;
+    height: 100%;
+  }
+  
+  .sbw-highlight-carousel .sbw-highlight-carousel-slide .sbw-highlight-carousel-slide-content {
+    z-index: 1;
+    color: #fff;
+    text-align: left;
+    max-width: 100%;
+    margin: 0 auto;
+    transition: opacity 0.6s ease;
+  }
+
+  .sbw-highlight-carousel .sbw-highlight-carousel-slide .sbw-highlight-carousel-slide-content a {
+    color: #fff;
+    text-decoration: underline;
+    text-decoration-color: #fff;
+    transition: text-decoration-color 0.2s ease-in;
+    text-underline-position: from-font;
+  }
+
+  .sbw-highlight-carousel .sbw-highlight-carousel-slide .sbw-highlight-carousel-slide-content a:hover {
+    text-decoration-color: transparent;
+  }
+
+  .sbw-highlight-carousel .sbw-highlight-carousel-slide .sbw-highlight-carousel-slide-content p {
+    font-weight: 400;
+    line-height: 1.8;
+    font-size: 16px;
+  }
+
+  .sbw-highlight-carousel .sbw-highlight-carousel-slide .sbw-highlight-carousel-slide-content p:first-of-type {
+    margin-top: 8px;
+  }
+
+  .sbw-highlight-carousel .sbw-highlight-carousel-slide .sbw-highlight-carousel-slide-content h2 {
+    font-size: 24px;
+    line-height: 1.3;
+    margin-bottom: 16px;
+    color: #fff;
+  }
+  
+  .sbw-highlight-carousel .sbw-highlight-carousel-slide-indicators {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 10px;
+    padding-top: 40px;
+    line-height: 1;
+  }
+
+  .sbw-highlight-carousel .sbw-highlight-carousel-slide-indicators .sbw-highlight-carousel-slide-indicator button::after {
+    content: none;
+  }
+  
+  .sbw-highlight-carousel .sbw-highlight-carousel-slide-indicator button {
+    width: 8px;
+    height: 8px;
+    margin: 0;
+    padding: 0;
+    border-radius: 50%;
+    background-color: #828282;
+    transition: all 0.4s cubic-bezier(0.25, 0.1, 0.25, 1);
+    border: none;
+    cursor: pointer;
+  }
+  
+  .sbw-highlight-carousel .sbw-highlight-carousel-slide-indicator button:hover {
+    background-color: #fff;
+  }
+  
+  .sbw-highlight-carousel .sbw-highlight-carousel-slide-indicator button:disabled,
+  .sbw-highlight-carousel .sbw-highlight-carousel-slide-indicator button:active,
+  .sbw-highlight-carousel .sbw-highlight-carousel-slide-indicator button:focus-visible {
+    background-color: #fff;
+  }
+  
+  .sbw-highlight-carousel .sbw-highlight-carousel-navigation-buttons {
+    display: block;
+    position: absolute;
+    top: 35%;
+    left: 0;
+    right: 0;
+    pointer-events: none;
+    width: 100%;
+    margin: 0 auto;
+    z-index: 10;
+  }
+  
+  .sbw-highlight-carousel .sbw-highlight-carousel-navigation-buttons button {
+    position: absolute;
+    width: 40px;
+    height: 40px;
+    margin: 0;
+    border-radius: 50%;
+    padding: 0;
+    background-color: #fff;
+    border: none;
+    cursor: pointer;
+    pointer-events: auto;
+    overflow: hidden;
+    z-index: 10;
+    border: 1px solid #000;
+  }
+  
+  .sbw-highlight-carousel .sbw-highlight-carousel-navigation-buttons .slide-prev {
+    right: calc(50% + 370px + (144px / 2));
+  }
+  
+  .sbw-highlight-carousel .sbw-highlight-carousel-navigation-buttons .slide-next {
+    left: calc(50% + 370px + (144px / 2));
+  }
+  
+  .sbw-highlight-carousel .sbw-highlight-carousel-navigation-buttons button:focus-visible {
+    background-color: #fff;
+    transform: scale(1.1);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
+  }
+  
+  .sbw-highlight-carousel .sbw-highlight-carousel-navigation-buttons button::after {
+    display: block;
+    content: '';
+    border: 3px solid #222;
+    border-bottom: 0;
+    border-left: 0;
+    height: 10px;
+    width: 10px;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-25%, -50%) rotate(-135deg);
+    transition: transform 0.3s ease;
+  }
+  
+  .sbw-highlight-carousel .sbw-highlight-carousel-navigation-buttons button.slide-next::after {
+    transform: translate(-75%, -50%) rotate(45deg);
+  }
+  
+  .sbw-highlight-carousel .sbw-highlight-carousel-navigation-buttons button:hover::after {
+      border-color: #000;
+}
+
+@media (max-width: 768px) {
+    
+    .sbw-highlight-carousel .sbw-highlight-carousel-slides {
+      gap: 0;
+    }
+    
+    .sbw-highlight-carousel .sbw-highlight-carousel-slide {
+      flex: 0 0 100%;
+      width: 100%;
+      padding-inline: 24px;
+      opacity: 1 !important;
+      filter: none !important;
+    }
+
+    /* クローンスライドのフィルターも無効化 */
+    .sbw-highlight-carousel .sbw-highlight-carousel-slide.clone-slide,
+    .sbw-highlight-carousel .sbw-highlight-carousel-slide.partially-visible,
+    .sbw-highlight-carousel .sbw-highlight-carousel-slide.clone-slide.partially-visible {
+      opacity: 1 !important;
+      filter: none !important;
+    }
+    
+    .sbw-highlight-carousel .sbw-highlight-carousel-slide .sbw-highlight-carousel-slide-content p {
+      margin-top: 8px;
+    }
+    
+    .sbw-highlight-carousel .sbw-highlight-carousel-slide .sbw-highlight-carousel-slide-content h3 {
+      font-size: 16px;
+      margin-top: 24px;
+    }
+
+    .sbw-highlight-carousel .sbw-highlight-carousel-navigation-buttons {
+        top: 20%;
+      }
+
+    .sbw-highlight-carousel .sbw-highlight-carousel-navigation-buttons button {
+        position: absolute;
+        width: 32px;
+        height: 32px;
+      }
+    
+    .sbw-highlight-carousel .sbw-highlight-carousel-navigation-buttons .slide-prev {
+      right: calc(50% + 138px + (20px / 2));
+    }
+    
+    .sbw-highlight-carousel .sbw-highlight-carousel-navigation-buttons .slide-next {
+      left: calc(50% + 138px + (20px / 2));
+    }
+  }
