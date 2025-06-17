@@ -8,6 +8,7 @@ export default async function decorate(block) {
   const itemClass = `${baseClass}-item`;
   const itemInnerClass = `${itemClass}-inner`;
   const itemImageClass = `${itemClass}-image`;
+  const itemImageWrapperClass = `${itemImageClass}-wrapper`;
   const itemContentClass = `${itemClass}-content`;
   const itemTagClass = `${itemClass}-tag`;
   const itemTitleClass = `${itemClass}-title`;
@@ -15,6 +16,10 @@ export default async function decorate(block) {
   const readMoreClass = `${itemClass}-readmore`;
   const itemSpeakersClass = `${itemClass}-speakers`;
   const itemSpeakersItemClass = `${itemSpeakersClass}-item`;
+  const itemSpeakersImageClass = `${itemSpeakersItemClass}-image`;
+  const itemSpeakersContentClass = `${itemSpeakersItemClass}-content`;
+  const itemSpeakersNameClass = `${itemSpeakersItemClass}-name`;
+  const itemSpeakersCompanyClass = `${itemSpeakersItemClass}-company`;
   const sessionTypeClass = 'type-special';
   let isSpecial = false;
 
@@ -128,6 +133,7 @@ export default async function decorate(block) {
 
             const listItem = document.createElement('li');
             listItem.className = itemWrapperClass;
+            session.sessionInfo.isSpecial ? listItem.classList.add('-special') : ''; // 特別講演の時にクラスを追加
             
             const article = document.createElement('article');
             const card = document.createElement('a');
@@ -135,16 +141,6 @@ export default async function decorate(block) {
             
             const cardInner = document.createElement('div');
             cardInner.className = itemInnerClass;
-
-            // 画像セクションの処理
-            const imageSection = row.children[0];
-            if (imageSection && session.sessionInfo.isSpecial) {
-              const imgElement = document.createElement('img');
-              const imageSectionClone = imageSection.cloneNode(true);
-              imageSectionClone.className = itemImageClass;
-              imageSectionClone.appendChild(imgElement);
-              cardInner.appendChild(imageSectionClone);
-            }
 
             // コンテンツコンテナの作成
             const contentContainer = document.createElement('div');
@@ -194,25 +190,46 @@ export default async function decorate(block) {
               contentContainer.appendChild(detailsElement);
             }
 
-            // 登壇者の処理
+            // スピーカー情報の処理
             if (session.speakers.length > 0) {
-              const speakersWrapper = document.createElement('div');
+              const speakerImage = document.createElement('div');
+              const speakersWrapper = document.createElement('ul');
+              speakerImage.className = itemImageWrapperClass;
               speakersWrapper.className = itemSpeakersClass;
 
               session.speakers.forEach(speaker => {
-                const speakerElement = document.createElement('div');
+                // 特別講演の場合のスピーカー画像処理
+                if (session.sessionInfo.isSpecial) {
+                  const pictureElement = document.createElement('picture');
+                  const imgElement = document.createElement('img');
+                  imgElement.className = itemImageClass;
+                  imgElement.src = speaker.image;
+                  imgElement.alt = speaker.name;
+                  pictureElement.appendChild(imgElement);
+                  speakerImage.appendChild(pictureElement);
+                }
+
+                // スピーカー情報の表示
+                const speakerElement = document.createElement('li');
                 speakerElement.className = itemSpeakersItemClass;
-                speakerElement.innerHTML = `${!session.sessionInfo.isSpecial ? `<div class="sbw-card-session-item-speakers-image">
-                    <img src="${speaker.image}" alt="${speaker.name}">
-                  </div>` : ''}`+`
-                  <div class="sbw-card-session-item-speakers-content">
-                    <div class="sbw-card-session-item-speakers-name">${speaker.name}</div>
-                    <div class="sbw-card-session-item-speakers-company">${speaker.company}</div>
+                speakerElement.innerHTML = `
+                  <div class="${itemSpeakersImageClass}">
+                    <picture>
+                      <img src="${speaker.image}" alt="${speaker.name}">
+                    </picture>
+                  </div>
+                  <div class="${itemSpeakersContentClass}">
+                    <div class="${itemSpeakersCompanyClass}">${speaker.company}</div>
+                    <div class="${itemSpeakersNameClass}">${speaker.name}</div>
                   </div>
                 `;
                 speakersWrapper.appendChild(speakerElement);
               });
+
               contentContainer.appendChild(speakersWrapper);
+              if (session.sessionInfo.isSpecial) {
+                cardInner.appendChild(speakerImage);
+              }
             }
 
             // リンクの処理
