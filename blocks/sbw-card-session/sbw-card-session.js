@@ -164,7 +164,7 @@ export default async function decorate(block) {
 
             // 詳細テキストの処理
             if (session.sessionInfo.description) {
-              const detailsElement = document.createElement('div');
+              const detailsElement = document.createElement('p');
               detailsElement.className = itemDetailsClass;
               detailsElement.innerHTML = session.sessionInfo.description;
               
@@ -219,8 +219,8 @@ export default async function decorate(block) {
                     </picture>
                   </div>
                   <div class="${itemSpeakersContentClass}">
-                    <div class="${itemSpeakersCompanyClass}">${speaker.company}</div>
-                    <div class="${itemSpeakersNameClass}">${speaker.name}</div>
+                    <p class="${itemSpeakersCompanyClass}">${speaker.company}</p>
+                    <p class="${itemSpeakersNameClass}">${speaker.name}</p>
                   </div>
                 `;
                 speakersWrapper.appendChild(speakerElement);

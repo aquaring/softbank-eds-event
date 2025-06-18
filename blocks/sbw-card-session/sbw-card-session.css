@@ -101,6 +101,56 @@
   color: var(--text-black);
 }
 
+.sbw-card-session-item-speakers{
+  display: flex;
+  width: 100%;
+  gap: 16px 24px;
+  flex-wrap: wrap;
+  margin-top: 32px;
+}
+
+.sbw-card-session-item-speakers-item{
+  display: flex;
+  flex-basis: calc((100% - 24px) / 2);
+  gap: 32px;
+  align-items: center;
+}
+
+.sbw-card-session-item-speakers-item-image{
+  flex-basis: 100px;
+  height: 100px;
+  border-radius: 4px;
+  overflow: hidden;
+}
+.sbw-card-session-item-speakers-item-image img{
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.sbw-card-session-item-speakers-item-content{
+  flex: 1;
+  color: var(--text-black);
+}
+
+.sbw-card-session-item-speakers-item-company,
+.sbw-card-session-item-speakers-item-name{
+  line-height: 1.5;
+}
+
+.sbw-card-session-item-speakers-item-company{
+  font-weight: 500;
+  font-size: 14px;
+}
+
+.sbw-card-session-item-speakers-item-name{
+  font-weight: 700;
+  font-size: 18px;
+  margin-top: 8px;
+}
+
+
+
 .sbw-card-session-item-text {
   font-size: 14px;
   font-weight: 500;
@@ -160,6 +210,64 @@
   margin: 0 !important;
 }
 
+/* 特別講演 PC */
+@media (min-width: 769px) {
+  .-special .sbw-card-session-item-speakers-item-image{
+    display: none;
+  }
+
+  .-special .sbw-card-session-item-image-wrapper{
+    display: flex;
+    align-items: flex-start;
+    gap: 16px;
+  }
+
+  .-special .sbw-card-session-item-image-wrapper picture{
+    flex-basis: 240px;
+    width: 240px;
+    border-radius: 4px;
+    overflow: hidden;
+    aspect-ratio: 1 / 1;
+  }
+
+  .-special .sbw-card-session-item-image-wrapper picture img{
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .-special .sbw-card-session-item-speakers{
+    flex-direction: column;
+    gap: 24px;
+    flex-wrap: nowrap;
+    margin-top: 24px;
+  }
+
+  .-special .sbw-card-session-item-speakers-item{
+    flex-basis: 100%;
+  }
+
+  .-special .sbw-card-session-item-speakers-item-image{
+    width: 100%;
+    border-radius: 4px;
+  }
+
+  .-special .sbw-card-session-item-speakers-item-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+}
+
+/* タブレット */
+@media (min-width: 769px) and (max-width: 992px) {
+  .-special .sbw-card-session-item-image-wrapper{
+    flex-basis: 240px;
+    flex-direction: column;
+  }
+}
+
+/* スマートフォン */
 @media (max-width: 768px) {
   .sbw-card-session-item-inner {
     flex-direction: column-reverse;
@@ -173,6 +281,19 @@
   
   .sbw-card-session-item-note {
     margin-block: 16px 0;
+  }
+
+  .sbw-card-session-item-speakers{
+    flex-direction: column;
+    gap: 16px;
+    flex-wrap: nowrap;
+    margin-top: 16px;
+  }
+
+  .sbw-card-session-item-speakers-item{
+    flex-basis: 100%;
+    gap: 16px;
+    align-items: flex-start;
   }
   
   .sbw-card-session-item-image {
@@ -203,4 +324,29 @@
     right: 16px;
     margin-block: auto !important;
   }
+
+  /* 特別講演 SP */
+  .-special .sbw-card-session-item-image-wrapper{
+    display: none;
+  }
+
+  .-special .sbw-card-session-item-speakers{
+    display: block;
+  }
+
+  .-special .sbw-card-session-item-speakers-item{
+    flex-direction: column-reverse;
+  }
+
+  .-special .sbw-card-session-item-speakers-item + .sbw-card-session-item-speakers-item{
+    margin-top: 32px;
+  }
+
+  .-special .sbw-card-session-item-speakers-item-image{
+    flex-basis: 100%;
+    width: 100%;
+    height: auto;
+    aspect-ratio: 1/1;
+  }
+
 }
