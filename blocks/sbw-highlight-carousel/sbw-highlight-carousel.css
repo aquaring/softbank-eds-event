@@ -16,6 +16,15 @@
     margin-right: calc(50% - 50vw);
   }
   
+  /* Windows での対応 */
+  @media screen and (min-resolution: 1dppx) and (max-resolution: 1.5dppx) {
+    .sbw-section-bg-img-wrap .sbw-highlight-carousel-wrapper {
+      width: calc(100vw - 17px); /* 一般的なスクロールバー幅 */
+      margin-left: calc(50% - 50vw + 8.5px);
+      margin-right: calc(50% - 50vw + 8.5px);
+    }
+  }
+  
   .sbw-highlight-carousel {
     color: #fff;
     position: relative;
