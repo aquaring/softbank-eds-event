@@ -42,6 +42,7 @@
 
 .sbw-card-session-item-inner {
   display: flex;
+  align-items: center;
   flex-direction: row-reverse;
   gap: 64px;
   height: 100%;
@@ -90,7 +91,6 @@
   font-size: 24px;
   font-weight: 700;
   color: var(--text-black);
-  margin: 0 0 24px 0;
 }
 
 .sbw-card-session-item-tag + .sbw-card-session-item-title {
@@ -273,10 +273,6 @@
     flex-direction: column-reverse;
     gap: 0;
     padding: 0;
-  }
-  
-  .sbw-card-session-item-title {
-    margin: 0 0 16px 0;
   }
   
   .sbw-card-session-item-note {
