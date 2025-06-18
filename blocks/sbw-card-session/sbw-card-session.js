@@ -88,7 +88,7 @@ export default async function decorate(block) {
                       sessionInfo.tag = value.textContent.trim();
                       break;
                     case 'title':
-                      sessionInfo.title = value.textContent.trim();
+                      sessionInfo.title = value.innerHTML.trim();
                       break;
                     case 'caption':
                       sessionInfo.caption = value.textContent.trim();
@@ -108,7 +108,7 @@ export default async function decorate(block) {
                 const divs = speaker.querySelectorAll('div');
                 return {
                   image: img?.src || '',
-                  company: divs[1]?.textContent?.trim() || '',
+                  company: divs[1]?.innerHTML?.trim() || '',
                   name: divs[2]?.textContent?.trim() || ''
                 };
               });
