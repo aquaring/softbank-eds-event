@@ -73,7 +73,6 @@ export default async function decorate(block) {
               const sessionInfo = {
                 tag: '',
                 title: '',
-                description: '',
                 caption: '',
                 link: '',
                 isSpecial: isSpecial
@@ -90,9 +89,6 @@ export default async function decorate(block) {
                       break;
                     case 'title':
                       sessionInfo.title = value.textContent.trim();
-                      break;
-                    case 'description':
-                      sessionInfo.description = value.textContent.trim();
                       break;
                     case 'caption':
                       sessionInfo.caption = value.textContent.trim();
@@ -160,34 +156,6 @@ export default async function decorate(block) {
               titleElement.className = itemTitleClass;
               titleElement.textContent = session.sessionInfo.title;
               contentContainer.appendChild(titleElement);
-            }
-
-            // 詳細テキストの処理
-            if (session.sessionInfo.description) {
-              const detailsElement = document.createElement('p');
-              detailsElement.className = itemDetailsClass;
-              detailsElement.innerHTML = session.sessionInfo.description;
-              
-              const paragraphs = detailsElement.querySelectorAll('p');
-              paragraphs.forEach(p => {
-                let classAdded = false;
-                
-                if (p.querySelector('strong')) {
-                  p.classList.add('sbw-card-session-item-name');
-                  classAdded = true;
-                }
-                
-                if (p.querySelector('em')) {
-                  p.classList.add('sbw-card-session-item-note');
-                  classAdded = true;
-                }
-                
-                if (!classAdded) {
-                  p.classList.add('sbw-card-session-item-text');
-                }
-              });
-              
-              contentContainer.appendChild(detailsElement);
             }
 
             // スピーカー情報の処理
