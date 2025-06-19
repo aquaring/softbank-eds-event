@@ -21,11 +21,7 @@
 }
 
 .sbw-session-information-item.tag + .sbw-session-information-item.title{
-  margin-top: 64px;
-
-  @media (width <= 768px) {
-    margin-top: 16px;
-  }
+  margin-top: 24px;
 }
 
 .sbw-session-information-item.title h2{

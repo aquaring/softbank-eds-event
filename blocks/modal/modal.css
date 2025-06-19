@@ -133,3 +133,12 @@ body[style*="position: fixed"] {
 .modal.sbw-featured-session-modal .default-content-wrapper > *:first-child{
   margin-top: 0;
 }
+
+.modal.sbw-featured-session-modal p.button-container{
+  width: fit-content;
+}
+
+.modal.sbw-featured-session-modal .button-container a.button{
+  font-size: 16px;
+  padding: 16px 72px 16px 40px;
+}
