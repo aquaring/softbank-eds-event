@@ -138,7 +138,8 @@ body[style*="position: fixed"] {
   width: fit-content;
 }
 
-.modal.sbw-featured-session-modal .button-container a.button{
+.modal.sbw-featured-session-modal .button-container a.button,
+.modal.sbw-featured-session-modal .sbw-session-information-item.link a.button{
   font-size: 16px;
   padding: 16px 72px 16px 40px;
 }
