@@ -1,0 +1,47 @@
+.sbw-session-information{
+
+  @media (width <= 768px) {
+  }
+}
+
+.sbw-session-information-item{
+}
+
+.sbw-session-information-item.tag p{
+  display: inline-block;
+  text-align: center;
+  font-size: 18px;
+  font-weight: 500;
+  line-height: 1.25;
+  padding: 4px 40px;
+  border-radius: 40px;
+  width: fit-content;
+  background-color: var(--background-purple-01);
+  color: var(--background-color);
+}
+
+.sbw-session-information-item.tag + .sbw-session-information-item.title{
+  margin-top: 24px;
+}
+
+.sbw-session-information-item.title h2{
+  margin-top: 0;
+}
+
+.sbw-session-information-item.description{
+  line-height: 1.5;
+  margin-top: 16px;
+}
+
+.sbw-session-information-item.caption{
+  margin-top: 16px;
+}
+.sbw-session-information-item.caption ul li{
+  color: var(--text-gray);
+  font-size: 12px;
+  line-height: 125%; /* 15px */
+}
+
+.sbw-session-information-item.link{
+  margin-top: 24px;
+}

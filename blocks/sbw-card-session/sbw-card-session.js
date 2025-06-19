@@ -1,6 +1,6 @@
 import { createOptimizedPicture } from '../../scripts/aem.js';
 
-export default function decorate(block) {
+export default async function decorate(block) {
   // 各要素のクラス名を定義
   const baseClass = 'sbw-card-session';
   const containerClass = `${baseClass}-list`;
@@ -8,12 +8,25 @@ export default function decorate(block) {
   const itemClass = `${baseClass}-item`;
   const itemInnerClass = `${itemClass}-inner`;
   const itemImageClass = `${itemClass}-image`;
+  const itemImageWrapperClass = `${itemImageClass}-wrapper`;
   const itemContentClass = `${itemClass}-content`;
   const itemTagClass = `${itemClass}-tag`;
   const itemTitleClass = `${itemClass}-title`;
   const itemDetailsClass = `${itemClass}-details`;
-  const itemDatetimeClass = `${itemClass}-datetime`;
   const readMoreClass = `${itemClass}-readmore`;
+  const itemSpeakersClass = `${itemClass}-speakers`;
+  const itemSpeakersItemClass = `${itemSpeakersClass}-item`;
+  const itemSpeakersImageClass = `${itemSpeakersItemClass}-image`;
+  const itemSpeakersContentClass = `${itemSpeakersItemClass}-content`;
+  const itemSpeakersNameClass = `${itemSpeakersItemClass}-name`;
+  const itemSpeakersCompanyClass = `${itemSpeakersItemClass}-company`;
+  const sessionTypeClass = 'type-special';
+  let isSpecial = false;
+
+  // セッションのデータを格納する配列
+  let sessionData = [];
+  const sessionInfoTable = 'sbw-session-information';
+  const sessionSpeakers = 'sbw-featured-session-modal-person';
 
   // 画像サイズの出しわけ設定
   const breakpoints = [
@@ -25,150 +38,199 @@ export default function decorate(block) {
   const container = document.createElement('ul');
   container.className = containerClass;
 
-  [...block.children].forEach((row) => {
-    // リストアイテムを作成
-    const listItem = document.createElement('li');
-    listItem.className = itemWrapperClass;
-    
-    // articleを作成
-    const article = document.createElement('article');
-    
-    // リンク要素を作成
-    const card = document.createElement('a');
-    card.className = itemClass;
-    
-    // カード内部コンテナの作成
-    const cardInner = document.createElement('div');
-    cardInner.className = itemInnerClass;
-
-    // 画像セクションの処理 [0]
-    const imageSection = row.children[0];
-    if (imageSection) {
-      const imageSectionClone = imageSection.cloneNode(true);
-      imageSectionClone.className = itemImageClass;
-      cardInner.appendChild(imageSectionClone);
-    }
-
-    // コンテンツコンテナの作成
-    const contentContainer = document.createElement('div');
-    contentContainer.className = itemContentClass;
-
-    // タグと時間の処理 [1]
-    const headerSection = row.children[1];
-    if (headerSection) {
-      console.log('HeaderSection structure:', headerSection.innerHTML); // デバッグ用
+  // 非同期処理をPromise.allで待機
+  await Promise.all([...block.children].map(async (row) => {
+    if (row.children[0].innerText.startsWith('/shared-')) {
+      const jsonPath = row.children[0].innerText;
+      const displayId = row.children[1].innerText;
       
-      // pタグを探してタグとして処理（最初に処理）
-      const pTags = headerSection.querySelectorAll('p');
-      if (pTags.length > 0) {
-        pTags.forEach(pTag => {
-          pTag.className = itemTagClass;
-          contentContainer.appendChild(pTag);
-        });
-      }
-      
-      // h3タグを探してタイトルとして処理（2番目に処理）
-      const h3Tag = headerSection.querySelector('h3');
-      if (h3Tag) {
-        const titleElement = document.createElement('h3');
-        titleElement.className = itemTitleClass;
-        titleElement.textContent = h3Tag.textContent.trim();
-        contentContainer.appendChild(titleElement);
-      }
-      
-      // 時間部分（timeタグがあれば取得）
-      const timeTag = headerSection.querySelector('time');
-      if (timeTag) {
-        const timeElement = document.createElement('time');
-        timeElement.className = itemDatetimeClass;
-        timeElement.textContent = timeTag.textContent.trim();
-        contentContainer.appendChild(timeElement);
-      }
-      
-      // 子要素が一つもなかった場合は、テキスト全体をタイトルとして扱う
-      if (!h3Tag && !timeTag) {
-        const titleElement = document.createElement('h3');
-        titleElement.className = itemTitleClass;
-        titleElement.textContent = headerSection.textContent.trim();
-        contentContainer.appendChild(titleElement);
-      }
-    }
-
-    // 詳細テキストの処理 [2]
-    const detailsSection = row.children[2];
-    if (detailsSection) {
-      // 詳細テキストの内容をそのままコピー
-      const detailsElement = document.createElement('div');
-      detailsElement.className = itemDetailsClass;
-      detailsElement.innerHTML = detailsSection.innerHTML;
-      
-      // strongタグを含むpタグにクラスを追加
-      const paragraphs = detailsElement.querySelectorAll('p');
-      paragraphs.forEach(p => {
-        let classAdded = false;
+      try {
+        const response = await fetch(`${jsonPath}.json`);
+        const jsonData = await response.json();
         
-        if (p.querySelector('strong')) {
-          p.classList.add('sbw-card-session-item-name');
-          classAdded = true;
-        }
-        
-        // emタグを含むpタグにクラスを追加
-        if (p.querySelector('em')) {
-          p.classList.add('sbw-card-session-item-note');
-          classAdded = true;
-        }
-        
-        // クラスが何も追加されなかったpタグに「sbw-card-session-item-text」を追加
-        if (!classAdded) {
-          p.classList.add('sbw-card-session-item-text');
-        }
-      });
-      
-      contentContainer.appendChild(detailsElement);
-    }
+        if (jsonData.data.length > 0) {
+          // displayIdに対応するデータを抽出
+          const filteredData = jsonData.data.filter(item => item[displayId] === "true");
+          sessionData = filteredData;
+          
+          // 各セッションのHTMLを取得
+          const sessionPromises = await Promise.all(sessionData.map(async (session) => {
+            try {
+              const sessionResponse = await fetch(session.path);
+              const htmlContent = await sessionResponse.text();
+              
+              // HTMLをパース
+              const parser = new DOMParser();
+              const doc = parser.parseFromString(htmlContent, 'text/html');
+              const sectionMetadata = doc.querySelector('.section-metadata');
+              // 全ての子要素のテキストコンテンツをチェック
+              const allTextContent = sectionMetadata.textContent || '';
+              isSpecial = allTextContent.includes(sessionTypeClass);
+              
+              
+              // セッション情報を取得
+              const sessionInfoDivs = doc.querySelectorAll(`.${sessionInfoTable} > div`);
+              const sessionInfo = {
+                tag: '',
+                title: '',
+                caption: '',
+                link: '',
+                isSpecial: isSpecial
+              };
 
-    // リンクの処理 [3]
-    const linkSection = row.children[3];
-    let linkUrl = '#';
-    if (linkSection) {
-      const link = linkSection.querySelector('a');
-      if (link) {
-        linkUrl = link.href;
+              sessionInfoDivs.forEach(div => {
+                const key = div.querySelector('div:first-child')?.textContent?.trim();
+                const value = div.querySelector('div:last-child');
+                
+                if (key && value) {
+                  switch (key) {
+                    case 'tag':
+                      sessionInfo.tag = value.textContent.trim();
+                      break;
+                    case 'title':
+                      sessionInfo.title = value.innerHTML.trim();
+                      break;
+                    case 'caption':
+                      sessionInfo.caption = value.textContent.trim();
+                      break;
+                    case 'link':
+                      const link = value.querySelector('a');
+                      sessionInfo.link = link?.getAttribute('href') || '';
+                      break;
+                  }
+                }
+              });
+
+              // スピーカー情報を取得
+              const speakers = Array.from(doc.querySelectorAll(`.${sessionSpeakers} > div`)).map(speaker => {
+                const picture = speaker.querySelector('picture');
+                const img = picture?.querySelector('img');
+                const divs = speaker.querySelectorAll('div');
+                return {
+                  image: img?.src || '',
+                  company: divs[1]?.innerHTML?.trim() || '',
+                  name: divs[2]?.textContent?.trim() || ''
+                };
+              });
+
+              return {
+                ...session,
+                sessionInfo,
+                speakers
+              };
+            } catch (error) {
+              console.error(`Error fetching ${session.path}:`, error);
+              return session;
+            }
+          }));
+
+          // セッションデータを使用してDOMを構築
+          for (const session of sessionPromises) {
+
+            const listItem = document.createElement('li');
+            listItem.className = itemWrapperClass;
+            session.sessionInfo.isSpecial ? listItem.classList.add('-special') : ''; // 特別講演の時にクラスを追加
+            
+            const article = document.createElement('article');
+            const card = document.createElement('a');
+            card.className = itemClass;
+            
+            const cardInner = document.createElement('div');
+            cardInner.className = itemInnerClass;
+
+            // コンテンツコンテナの作成
+            const contentContainer = document.createElement('div');
+            contentContainer.className = itemContentClass;
+
+            // タグの処理
+            if (session.sessionInfo.tag) {
+              const tagElement = document.createElement('p');
+              tagElement.className = itemTagClass;
+              tagElement.textContent = session.sessionInfo.tag;
+              contentContainer.appendChild(tagElement);
+            }
+            
+            // タイトルの処理
+            if (session.sessionInfo.title) {
+              const titleElement = document.createElement('h3');
+              titleElement.className = itemTitleClass;
+              titleElement.textContent = session.sessionInfo.title;
+              contentContainer.appendChild(titleElement);
+            }
+
+            // スピーカー情報の処理
+            if (session.speakers.length > 0) {
+              const speakerImage = document.createElement('div');
+              const speakersWrapper = document.createElement('ul');
+              speakerImage.className = itemImageWrapperClass;
+              speakersWrapper.className = itemSpeakersClass;
+
+              session.speakers.forEach(speaker => {
+                // 特別講演の場合のスピーカー画像処理
+                if (session.sessionInfo.isSpecial) {
+                  const pictureElement = document.createElement('picture');
+                  const imgElement = document.createElement('img');
+                  imgElement.className = itemImageClass;
+                  imgElement.src = speaker.image;
+                  imgElement.alt = speaker.name;
+                  pictureElement.appendChild(imgElement);
+                  speakerImage.appendChild(pictureElement);
+                }
+
+                // スピーカー情報の表示
+                const speakerElement = document.createElement('li');
+                speakerElement.className = itemSpeakersItemClass;
+                speakerElement.innerHTML = `
+                  <div class="${itemSpeakersImageClass}">
+                    <picture>
+                      <img src="${speaker.image}" alt="${speaker.name}">
+                    </picture>
+                  </div>
+                  <div class="${itemSpeakersContentClass}">
+                    <p class="${itemSpeakersCompanyClass}">${speaker.company}</p>
+                    <p class="${itemSpeakersNameClass}">${speaker.name}</p>
+                  </div>
+                `;
+                speakersWrapper.appendChild(speakerElement);
+              });
+
+              contentContainer.appendChild(speakersWrapper);
+              if (session.sessionInfo.isSpecial) {
+                cardInner.appendChild(speakerImage);
+              }
+            }
+
+            // リンクの処理
+            card.href = session.path || '#';
+
+            // DOMの構築を完了
+            cardInner.appendChild(contentContainer);
+            card.appendChild(cardInner);
+            
+            // Read moreテキストを追加
+            const readMoreElement = document.createElement('div');
+            readMoreElement.className = readMoreClass;
+            
+            const readMoreText = document.createElement('span');
+            readMoreText.textContent = 'Read more';
+            
+            const readMoreIcon = document.createElement('span');
+            readMoreIcon.className = `${readMoreClass}-icon`;
+            
+            readMoreElement.appendChild(readMoreText);
+            readMoreElement.appendChild(readMoreIcon);
+            card.appendChild(readMoreElement);
+            
+            article.appendChild(card);
+            listItem.appendChild(article);
+            container.appendChild(listItem);
+          }
+        }
+      } catch (error) {
+        console.error('Error loading or processing JSON:', error);
       }
     }
-    card.href = linkUrl;
-
-    // contentContainerをcardInnerに追加
-    cardInner.appendChild(contentContainer);
-
-    // cardInnerをカードに追加
-    card.appendChild(cardInner);
-    
-    // Read moreテキストを追加
-    const readMoreElement = document.createElement('div');
-    readMoreElement.className = readMoreClass;
-    
-    const readMoreText = document.createElement('span');
-    readMoreText.textContent = 'Read more';
-    
-    const readMoreIcon = document.createElement('span');
-    readMoreIcon.className = `${readMoreClass}-icon`;
-    
-    readMoreElement.appendChild(readMoreText);
-    readMoreElement.appendChild(readMoreIcon);
-    
-    // Read moreをカードの最後に追加（内部コンテナの外）
-    card.appendChild(readMoreElement);
-    
-    // カードをarticleに追加
-    article.appendChild(card);
-    
-    // articleをリストアイテムに追加
-    listItem.appendChild(article);
-    
-    // リストアイテムをコンテナに追加
-    container.appendChild(listItem);
-  });
+  }));
 
   // pictureを最適化
   container.querySelectorAll('picture > img').forEach((img) => {

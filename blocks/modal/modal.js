@@ -163,9 +163,13 @@ function resetBodyPosition() {
  * @param {DocumentFragment} fragment 処理するフラグメント
  */
 function processButtonContainers(fragment) {
-  // 全てのaタグにtarget="_blank"を追加
+  // 全てのaタグにtarget="_blank"を追加（.sbw-session-information-item配下は除外）
   fragment.querySelectorAll('a').forEach(link => {
-    link.setAttribute('target', '_blank');
+    // .sbw-session-information-item配下のaタグは除外
+    const isInSessionInfoItem = link.closest('.sbw-session-information-item');
+    if (!isInSessionInfoItem) {
+      link.setAttribute('target', '_blank');
+    }
   });
   
   // ボタンコンテナのラッピング処理

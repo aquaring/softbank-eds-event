@@ -39,7 +39,7 @@ body[style*="position: fixed"] {
   overscroll-behavior: none;
   width: 100%;
   text-align: center;
-  padding: 40px 64px;
+  padding: 60px 64px 40px;
   position: relative;
 
   @media (width <= 768px) {
@@ -132,4 +132,14 @@ body[style*="position: fixed"] {
 
 .modal.sbw-featured-session-modal .default-content-wrapper > *:first-child{
   margin-top: 0;
+}
+
+.modal.sbw-featured-session-modal p.button-container{
+  width: fit-content;
+}
+
+.modal.sbw-featured-session-modal .button-container a.button,
+.modal.sbw-featured-session-modal .sbw-session-information-item.link a.button{
+  font-size: 16px;
+  padding: 16px 72px 16px 40px;
 }

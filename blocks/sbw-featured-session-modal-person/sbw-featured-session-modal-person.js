@@ -38,7 +38,7 @@ export default function decorate(block) {
       if (positionP) {
         const newPositionP = document.createElement('p');
         newPositionP.className = 'sbw-featured-session-modal-person-position';
-        newPositionP.textContent = positionP.textContent;
+        newPositionP.innerHTML = positionP.innerHTML;
         textDiv.appendChild(newPositionP);
       }
     }
