@@ -23,4 +23,34 @@ export default function decorate(block) {
   } else {
     block.classList.add('is-even-items');
   }
+
+  // スムーススクロールの実装
+  setupSmoothScroll(list);
+}
+
+/**
+ * スムーススクロールを設定する
+ * @param {HTMLElement} list アンカーリンクのリスト要素
+ */
+function setupSmoothScroll(list) {
+  const anchorLinks = list.querySelectorAll('a[href^="#"]');
+  
+  anchorLinks.forEach(link => {
+    link.addEventListener('click', (e) => {
+      e.preventDefault();
+      
+      const targetId = decodeURIComponent(link.getAttribute('href').substring(1));
+      const targetElement = document.getElementById(targetId);
+      
+      if (targetElement) {
+        targetElement.scrollIntoView({
+          behavior: 'smooth',
+          block: 'start'
+        });
+        
+        // URLのハッシュも更新
+        history.pushState(null, null, link.getAttribute('href'));
+      }
+    });
+  });
 }
