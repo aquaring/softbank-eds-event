@@ -35,6 +35,29 @@ function updateActiveSlide(slide) {
   });
 }
 
+// スライドの可視性とフィルター効果を更新する関数
+function updateVisibilityAndFilters(block) {
+  const slidesWrapper = block.querySelector('.sbw-highlight-carousel-slides');
+  if (!slidesWrapper) return;
+  
+  const containerWidth = slidesWrapper.offsetWidth;
+  const containerCenter = slidesWrapper.scrollLeft + (containerWidth / 2);
+  const allSlides = Array.from(block.querySelectorAll('.sbw-highlight-carousel-slide'));
+  
+  allSlides.forEach(slide => {
+    const slideCenter = slide.offsetLeft + (slide.offsetWidth / 2);
+    const distanceFromCenter = Math.abs(containerCenter - slideCenter);
+    
+    if (distanceFromCenter < slide.offsetWidth * 0.01) {
+      slide.classList.add('fully-visible');
+      slide.classList.remove('partially-visible');
+    } else {
+      slide.classList.add('partially-visible');
+      slide.classList.remove('fully-visible');
+    }
+  });
+}
+
 // 真の無限スクロールカルーセル初期化
 function initializeCircularCarousel(block) {
   const slidesWrapper = block.querySelector('.sbw-highlight-carousel-slides');

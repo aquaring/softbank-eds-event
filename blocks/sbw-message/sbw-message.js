@@ -43,6 +43,12 @@ export default function decorate(block) {
     const imgDiv = secondRow.children[0];
     if (imgDiv) {
       imgDiv.classList.add('sbw-message-img');
+      
+      // pタグを探してクラスを追加
+      const pElement = imgDiv.querySelector('p');
+      if (pElement) {
+        pElement.classList.add('sbw-message-img-caption');
+      }
     }
     
     const textDiv = secondRow.children[1];
