@@ -1,4 +1,17 @@
 export default function decorate(block) {
+  // sbw-partners-containerの直下にsbw-partners-container-innerを1つだけ作成
+  const parentContainer = block.closest('.section');
+  if (parentContainer && 
+      parentContainer.classList.contains('sbw-partners-container') && 
+      !parentContainer.querySelector('.sbw-partners-container-inner')) {
+    const innerContainer = document.createElement('div');
+    innerContainer.className = 'sbw-partners-container-inner';
+    while (parentContainer.firstChild) {
+      innerContainer.appendChild(parentContainer.firstChild);
+    }
+    parentContainer.appendChild(innerContainer);
+  }
+
   // pタグを囲むdivタグとdiv > div構造を削除
   function removeDivsAroundP(element) {
     if (!element?.children) return;

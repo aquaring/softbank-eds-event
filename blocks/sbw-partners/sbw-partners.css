@@ -13,6 +13,12 @@ main > .section.sbw-partners-container {
     }
 }
 
+.sbw-partners-container-inner {
+    max-width: 1248px;
+    margin: 0 auto;
+    padding-inline: 24px;
+}
+
 .sbw-section-bg-img-contents .sbw-partners-wrapper:first-child {
     @media (width <= 768px) {
         margin-top: 64px;
