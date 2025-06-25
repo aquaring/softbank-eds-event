@@ -1,12 +1,13 @@
 /* ========== ヘッダー共通レイアウト ========== */
 header.header-wrapper {
-  max-width: 1312px;
-  margin: 0 auto;
-  padding: 0 24px;
-  position: relative;
+  width: 100%;
+  border-bottom: 1px solid var(--border-gray);
 }
 
 .header-wrapper .header {
+  max-width: 1264px;
+  margin: 0 auto;
+  padding: 0 24px;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -239,14 +240,9 @@ header.header-wrapper {
     background-color: #787878;
     margin: 0 !important;
   }
-
-  /* ヘッダー基本レイアウト */
-  header.header-wrapper {
-    padding-left: 16px;
-    padding-right: 24px;
-  }
   
   .header-wrapper .header {
+    padding-left: 16px;
     height: 80px;
     flex-direction: row-reverse;
   }
