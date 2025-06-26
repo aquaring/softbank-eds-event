@@ -367,7 +367,7 @@ function processBackgroundFromMeta() {
       @media (width <= 768px) {
         main {
           background-image: url(${cleanImageUrl(bgImageSp)}) !important;
-          background-size: contain !important;
+          background-size: 100% 360px !important;
         }
       }
     `;
