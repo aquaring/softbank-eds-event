@@ -354,7 +354,7 @@ function processBackgroundFromMeta() {
   // PC用の背景画像を設定
   main.style.backgroundImage = `url(${cleanImageUrl(bgImage)})`;
   main.style.backgroundRepeat = 'no-repeat';
-  main.style.backgroundSize = 'contain';
+  main.style.backgroundSize = '100% 296px';
 
   // SP用の背景画像が指定されている場合、メディアクエリで切り替える
   if (bgImageSp) {
@@ -362,13 +362,12 @@ function processBackgroundFromMeta() {
     styleEl.textContent = `
       main {
         background-repeat: no-repeat;
-        background-size: contain;
+        background-size: 100% 296px;
       }
       @media (width <= 768px) {
         main {
           background-image: url(${cleanImageUrl(bgImageSp)}) !important;
-          background-repeat: no-repeat;
-          background-size: contain;
+          background-size: contain !important;
         }
       }
     `;
