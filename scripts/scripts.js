@@ -339,12 +339,53 @@ export function decorateMain(main) {
 }
 
 /**
+ * メタタグから背景画像を設定する
+ */
+function processBackgroundFromMeta() {
+  const metaBg = document.querySelector('meta[name="background"]');
+  const metaBgSp = document.querySelector('meta[name="background-sp"]');
+  const main = document.querySelector('main');
+
+  if (!main || !metaBg) return;
+
+  const bgImage = metaBg.getAttribute('content');
+  const bgImageSp = metaBgSp?.getAttribute('content');
+
+  // PC用の背景画像を設定
+  main.style.backgroundImage = `url(${cleanImageUrl(bgImage)})`;
+  main.style.backgroundRepeat = 'no-repeat';
+  main.style.backgroundSize = 'contain';
+
+  // SP用の背景画像が指定されている場合、メディアクエリで切り替える
+  if (bgImageSp) {
+    const styleEl = document.createElement('style');
+    styleEl.textContent = `
+      main {
+        background-repeat: no-repeat;
+        background-size: contain;
+      }
+      @media (width <= 768px) {
+        main {
+          background-image: url(${cleanImageUrl(bgImageSp)}) !important;
+          background-repeat: no-repeat;
+          background-size: contain;
+        }
+      }
+    `;
+    document.head.appendChild(styleEl);
+  }
+}
+
+/**
  * Loads everything needed to get to LCP.
  * @param {Element} doc The container element
  */
 async function loadEager(doc) {
   document.documentElement.lang = 'en';
   decorateTemplateAndTheme();
+  
+  // メタタグから背景画像を設定
+  processBackgroundFromMeta();
   
   // ヘッダーのスタイルを早期に読み込み
   await loadCSS(`${window.hlx.codeBasePath}/blocks/header/header.css`);
