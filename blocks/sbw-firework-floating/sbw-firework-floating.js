@@ -5,7 +5,7 @@ const FIREWORK_FLOATING_CONFIG = {
   scriptUrl: 'https://asset.fwcdn3.com/js/storyblock.js',
   defaultAttributes: {
     channel: 'hojin_marketing_stragetic_dept',
-    playlist: 'oyNPWg',
+    playlist: '',
     mode: 'pinned',
     autoplay: 'true',
     player_captions: 'false'
@@ -74,8 +74,9 @@ class FireworkStoryblockScriptLoader {
  * 単一責任: fw-storyblock要素の作成と設定
  */
 class FireworkStoryblockElementFactory {
-  constructor(config) {
+  constructor(config, playlistId) {
     this.config = config;
+    this.playlistId = playlistId;
   }
 
   /**
@@ -107,6 +108,11 @@ class FireworkStoryblockElementFactory {
     Object.entries(this.config.defaultAttributes).forEach(([key, value]) => {
       element.setAttribute(key, value);
     });
+    
+    // playlistIdが指定されている場合は、動的に設定
+    if (this.playlistId) {
+      element.setAttribute('playlist', this.playlistId);
+    }
   }
 }
 
@@ -115,10 +121,11 @@ class FireworkStoryblockElementFactory {
  * 責任: 全体の初期化フローを管理
  */
 class FireworkStoryblockIntegrationManager {
-  constructor(config = FIREWORK_FLOATING_CONFIG) {
+  constructor(playlistId, config = FIREWORK_FLOATING_CONFIG) {
+    this.playlistId = playlistId;
     this.config = config;
     this.scriptLoader = new FireworkStoryblockScriptLoader(config);
-    this.elementFactory = new FireworkStoryblockElementFactory(config);
+    this.elementFactory = new FireworkStoryblockElementFactory(config, playlistId);
   }
 
   /**
@@ -153,7 +160,8 @@ class FireworkStoryblockIntegrationManager {
  * 依存性注入によりテスタビリティを向上
  */
 export default function decorate(block) {
-  const manager = new FireworkStoryblockIntegrationManager();
+  const PLAYLIST_ID = block.querySelector('p').textContent;
+  const manager = new FireworkStoryblockIntegrationManager(PLAYLIST_ID);
   
   const initializeWhenReady = async () => {
     await manager.initialize(block);
