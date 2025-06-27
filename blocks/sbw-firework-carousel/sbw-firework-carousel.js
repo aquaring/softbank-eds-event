@@ -6,7 +6,7 @@ const FIREWORK_CONFIG = {
   loadDelay: 1500, // floating版の後に読み込むための遅延時間
   defaultAttributes: {
     channel: 'hojin_marketing_stragetic_dept',
-    playlist: '5qN2Xo',
+    playlist: '',
     mode: 'row',
     open_in: 'default',
     max_videos: '0',
@@ -26,8 +26,9 @@ const FIREWORK_CONFIG = {
  * 単一責任: スクリプトの読み込み（順序制御付き）
  */
 class FireworkScriptLoader {
-  constructor(config) {
+  constructor(config, playlistId) {
     this.config = config;
+    this.playlistId = playlistId;
   }
 
   /**
@@ -120,8 +121,9 @@ class FireworkScriptLoader {
  * 単一責任: fw-embed-feed要素の作成と設定
  */
 class FireworkElementFactory {
-  constructor(config) {
+  constructor(config, playlistId) {
     this.config = config;
+    this.playlistId = playlistId;
   }
 
   /**
@@ -153,6 +155,11 @@ class FireworkElementFactory {
     Object.entries(this.config.defaultAttributes).forEach(([key, value]) => {
       element.setAttribute(key, value);
     });
+    
+    // playlistIdが指定されている場合は、動的に設定
+    if (this.playlistId) {
+      element.setAttribute('playlist', this.playlistId);
+    }
   }
 }
 
@@ -161,10 +168,11 @@ class FireworkElementFactory {
  * 責任: 全体の初期化フローを管理
  */
 class FireworkIntegrationManager {
-  constructor(config = FIREWORK_CONFIG) {
+  constructor(playlistId, config = FIREWORK_CONFIG) {
+    this.playlistId = playlistId;
     this.config = config;
-    this.scriptLoader = new FireworkScriptLoader(config);
-    this.elementFactory = new FireworkElementFactory(config);
+    this.scriptLoader = new FireworkScriptLoader(config, playlistId);
+    this.elementFactory = new FireworkElementFactory(config, playlistId);
   }
 
   /**
@@ -174,11 +182,8 @@ class FireworkIntegrationManager {
    */
   async initialize(container) {
     try {
-      console.log('🎠 Carousel: フローティング版の読み込み完了を待機中...');
       await this.scriptLoader.loadScript();
-      console.log('🎠 Carousel: スクリプト読み込み完了、要素を作成中...');
       this._setupContent(container);
-      console.log('🎠 Carousel: 初期化完了！');
     } catch (error) {
       console.error('🚨 Firework initialization failed:', error);
     }
@@ -202,7 +207,8 @@ class FireworkIntegrationManager {
  * 依存性注入によりテスタビリティを向上
  */
 export default function decorate(block) {
-  const manager = new FireworkIntegrationManager();
+  const PLAYLIST_ID = block.querySelector('p').textContent;
+  const manager = new FireworkIntegrationManager(PLAYLIST_ID);
   
   const initializeWhenReady = async () => {
     await manager.initialize(block);
