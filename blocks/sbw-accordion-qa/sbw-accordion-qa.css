@@ -95,6 +95,9 @@
         }
     }
   }
+  p:not(:first-child) {
+    margin-top: 16px;
+  }
 }
 .sbw-accordion-qa-item.-open .answer-txt {
   display: block;
