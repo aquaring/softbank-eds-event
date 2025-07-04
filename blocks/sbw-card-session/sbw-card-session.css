@@ -113,7 +113,7 @@
   display: flex;
   flex-basis: calc((100% - 24px) / 2);
   gap: 32px;
-  align-items: center;
+  align-items: flex-start;
 }
 
 .sbw-card-session-item-speakers-item-image{
@@ -165,16 +165,22 @@
   margin-block: 0;
 }
 
-.sbw-card-session-item-note {
+.sbw-card-session-item-caption {
+  margin-top: 24px;
   font-size: 12px;
   font-weight: 500;
   line-height: 1.25;
   color: var(--text-gray);
-  margin-block: 24px 0;
+  list-style: none;
 }
 
-.sbw-card-session-item-note em {
+.sbw-card-session-item-caption-item {
   font-style: normal;
+  position: relative;
+
+  &:not(:first-of-type){
+    margin-top: 4px;
+  }
 }
 
 .sbw-card-session-item-readmore {
@@ -275,7 +281,7 @@
     padding: 0;
   }
   
-  .sbw-card-session-item-note {
+  .sbw-card-session-item-caption {
     margin-block: 16px 0;
   }
 

@@ -12,6 +12,7 @@ export default async function decorate(block) {
   const itemContentClass = `${itemClass}-content`;
   const itemTagClass = `${itemClass}-tag`;
   const itemTitleClass = `${itemClass}-title`;
+  const itemCaptionClass = `${itemClass}-caption`;
   const itemDetailsClass = `${itemClass}-details`;
   const readMoreClass = `${itemClass}-readmore`;
   const itemSpeakersClass = `${itemClass}-speakers`;
@@ -91,7 +92,7 @@ export default async function decorate(block) {
                     sessionInfo.title = value.innerHTML.trim();
                     break;
                   case 'caption':
-                    sessionInfo.caption = value.textContent.trim();
+                    sessionInfo.caption = value.innerHTML.trim();
                     break;
                   case 'link':
                     const link = value.querySelector('a');
@@ -197,6 +198,34 @@ export default async function decorate(block) {
             contentContainer.appendChild(speakersWrapper);
             if (session.sessionInfo.isSpecial) {
               cardInner.appendChild(speakerImage);
+            }
+          }
+
+          // キャプションの処理
+          if (session.sessionInfo.caption) {
+            // liタグの中身を抽出して配列に入れる
+            const captionText = session.sessionInfo.caption.toString();
+            const liMatches = captionText.match(/<li[^>]*>(.*?)<\/li>/g);
+            
+            if (liMatches && liMatches.length > 0) {
+              const captionElement = document.createElement('ul');
+              captionElement.className = itemCaptionClass;
+              
+              // 各liタグの中身を抽出して配列に格納
+              const liContents = liMatches.map(match => {
+                const contentMatch = match.match(/<li[^>]*>(.*?)<\/li>/);
+                return contentMatch ? contentMatch[1].trim() : '';
+              }).filter(content => content);
+              
+              // 配列の内容をli要素として作成
+              liContents.forEach(content => {
+                const newLi = document.createElement('li');
+                newLi.className = `${itemCaptionClass}-item`;
+                newLi.textContent = content;
+                captionElement.appendChild(newLi);
+              });
+              
+              contentContainer.appendChild(captionElement);
             }
           }
 

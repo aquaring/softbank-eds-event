@@ -37,9 +37,13 @@
   margin-top: 16px;
 }
 .sbw-session-information-item.caption ul li{
+  display: block;
   color: var(--text-gray);
   font-size: 12px;
-  line-height: 125%; /* 15px */
+  line-height: 1.25;
+  &:not(:first-of-type){
+    margin-top: 4px;
+  }
 }
 
 .sbw-session-information-item.link{
