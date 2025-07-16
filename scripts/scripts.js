@@ -324,6 +324,18 @@ function decorateTertiaryButtons(element) {
 }
 
 /**
+ * モーダルリンクにblankを設定する
+ * @param {Element} element 
+ */
+function decorateModalLinks(element) {
+  element.querySelectorAll('a').forEach((a) => {
+    if (a.href.includes('/modals/')) {
+      a.target = '_blank';
+    }
+  });
+}
+
+/**
  * Decorates the main element.
  * @param {Element} main The main element
  */
@@ -332,6 +344,7 @@ export function decorateMain(main) {
   // hopefully forward compatible button decoration
   decorateButtons(main);
   decorateTertiaryButtons(main);
+  decorateModalLinks(main);
   decorateIcons(main);
   buildAutoBlocks(main);
   decorateSections(main);
