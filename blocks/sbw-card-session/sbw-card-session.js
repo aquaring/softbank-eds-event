@@ -230,7 +230,13 @@ export default async function decorate(block) {
           }
 
           // リンクの処理
-          card.href = session.path || '#';
+          // /modals/パスをアンカーリンクに変換
+          if (session.path && session.path.includes('/modals/')) {
+            const modalId = session.path.split('/modals/')[1];
+            card.href = `#${modalId}`;
+          } else {
+            card.href = session.path || '#';
+          }
 
           // DOMの構築を完了
           cardInner.appendChild(contentContainer);
