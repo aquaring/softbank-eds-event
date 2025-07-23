@@ -231,6 +231,12 @@ export default async function decorate(block) {
 
           // リンクの処理
           card.href = session.path || '#';
+          
+          // セッションのモーダルの場合、IDを付与
+          if (session.path && session.path.includes('/modals/')) {
+            const modalId = session.path.split('/modals/')[1];
+            card.id = modalId;
+          }
 
           // DOMの構築を完了
           cardInner.appendChild(contentContainer);
