@@ -32,26 +32,10 @@ function autolinkModals(element) {
   element.addEventListener('click', async (e) => {
     const origin = e.target.closest('a');
 
-    if (origin && origin.href) {
-      const href = origin.getAttribute('href');
-      const isModalPath = origin.href.includes('/modals/');
-      // #で始まるアンカーリンク（ページ内要素でない場合）
-      const isAnchorForModal = href?.startsWith('#') && !document.getElementById(href.substring(1));
-      
-      if (isModalPath || isAnchorForModal) {
-        e.preventDefault();
-        const { openModal } = await import(`${window.hlx.codeBasePath}/blocks/modal/modal.js`);
-        
-        if (isAnchorForModal) {
-          // アンカーリンクの場合は、モーダルパスに変換
-          const anchorId = href.substring(1); // #を除去
-          const modalPath = `/modals/${anchorId}`;
-          openModal(modalPath);
-        } else {
-          // 従来通りの処理（/modals/パス）
-          openModal(origin.href);
-        }
-      }
+    if (origin && origin.href && origin.href.includes('/modals/')) {
+      e.preventDefault();
+      const { openModal } = await import(`${window.hlx.codeBasePath}/blocks/modal/modal.js`);
+      openModal(origin.href);
     }
   });
 }
@@ -340,18 +324,13 @@ function decorateTertiaryButtons(element) {
 }
 
 /**
- * モーダルリンクを装飾する（/modals/パスをアンカーリンクに変換）
+ * モーダルリンクにblankを設定する
  * @param {Element} element 
  */
 function decorateModalLinks(element) {
   element.querySelectorAll('a').forEach((a) => {
     if (a.href.includes('/modals/')) {
-      // /modals/パスをアンカーリンクに変換
-      const modalPath = a.getAttribute('href');
-      if (modalPath && modalPath.includes('/modals/')) {
-        const modalId = modalPath.split('/modals/')[1];
-        a.setAttribute('href', `#${modalId}`);
-        }
+      a.target = '_blank';
     }
   });
 }
