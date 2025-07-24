@@ -426,14 +426,125 @@ async function loadEager(doc) {
  * Loads everything that doesn't need to be delayed.
  * @param {Element} doc The container element
  */
+/**
+ * スムーズスクロール実行関数
+ * @param {string} targetId 対象要素のID
+ */
+function smoothScrollToElement(targetId) {
+  const element = document.getElementById(targetId);
+  if (!element) return;
+  
+  const elementRect = element.getBoundingClientRect();
+  const elementTop = elementRect.top + window.pageYOffset;
+  const targetPosition = elementTop - 40; // 40pxのマージン
+  
+  window.scrollTo({
+    top: Math.max(0, targetPosition),
+    behavior: 'smooth'
+  });
+}
+
+/**
+ * 画像読み込み監視を設定
+ * @param {string} targetId 対象要素のID
+ * @param {Object} scrollState スクロール状態管理オブジェクト
+ */
+function setupImageLoadMonitoring(targetId, scrollState) {
+  const images = document.querySelectorAll('img');
+  if (images.length === 0) return;
+  
+  let loadedCount = 0;
+  const handleImageLoad = () => {
+    loadedCount++;
+    if (loadedCount >= images.length && scrollState.attempts < scrollState.maxAttempts) {
+      scrollState.attempts++;
+      setTimeout(() => smoothScrollToElement(targetId), 150);
+    }
+  };
+  
+  images.forEach(img => {
+    if (img.complete) {
+      handleImageLoad();
+    } else {
+      img.addEventListener('load', handleImageLoad);
+      img.addEventListener('error', handleImageLoad);
+    }
+  });
+}
+
+/**
+ * レイアウト変更監視を設定
+ * @param {string} targetId 対象要素のID
+ * @param {Object} scrollState スクロール状態管理オブジェクト
+ */
+function setupLayoutObservers(targetId, scrollState) {
+  const observers = [];
+  
+  // ResizeObserver
+  if (window.ResizeObserver) {
+    const resizeObserver = new ResizeObserver(() => {
+      if (scrollState.attempts < scrollState.maxAttempts) {
+        scrollState.attempts++;
+        setTimeout(() => smoothScrollToElement(targetId), 50);
+      }
+    });
+    resizeObserver.observe(document.body);
+    observers.push(resizeObserver);
+  }
+  
+  // MutationObserver
+  if (window.MutationObserver) {
+    const mutationObserver = new MutationObserver(() => {
+      if (scrollState.attempts < scrollState.maxAttempts) {
+        scrollState.attempts++;
+        setTimeout(() => smoothScrollToElement(targetId), 50);
+      }
+    });
+    
+    mutationObserver.observe(document.body, {
+      childList: true,
+      subtree: true,
+      attributes: true,
+      attributeFilter: ['style', 'class']
+    });
+    observers.push(mutationObserver);
+  }
+  
+  // 5秒後に全ての監視を停止
+  setTimeout(() => {
+    observers.forEach(observer => observer.disconnect());
+  }, 5000);
+}
+
+/**
+ * アンカーリンクを改善された方法でスクロールする
+ * @param {string} hash ハッシュ値
+ * @param {Element} doc ドキュメント要素
+ */
+function handleAnchorLink(hash, doc) {
+  if (!hash) return;
+  
+  const targetId = hash.substring(1);
+  const element = doc.getElementById(targetId);
+  if (!element) return;
+  
+  const scrollState = { attempts: 0, maxAttempts: 10 };
+  
+  // 即座にスクロール
+  smoothScrollToElement(targetId);
+  
+  // 各種監視設定
+  setupImageLoadMonitoring(targetId, scrollState);
+  setupLayoutObservers(targetId, scrollState);
+}
+
 async function loadLazy(doc) {
   autolinkModals(doc);
   const main = doc.querySelector('main');
   await loadSections(main);
 
   const { hash } = window.location;
-  const element = hash ? doc.getElementById(hash.substring(1)) : false;
-  if (hash && element) element.scrollIntoView();
+  handleAnchorLink(hash, doc);
 
   loadFooter(doc.querySelector('footer'));
 
