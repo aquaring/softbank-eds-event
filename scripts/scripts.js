@@ -393,7 +393,7 @@ function processBackgroundFromMeta() {
  * @param {Element} doc The container element
  */
 async function loadEager(doc) {
-  document.documentElement.lang = 'en';
+  document.documentElement.lang = 'ja';
   decorateTemplateAndTheme();
   
   // メタタグから背景画像を設定
